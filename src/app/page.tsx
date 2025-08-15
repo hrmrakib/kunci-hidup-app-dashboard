@@ -3,9 +3,8 @@
 
 import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Bell, BarChart3, Users } from "lucide-react";
+import { BarChart3, Users } from "lucide-react";
 
 // Mock data for the chart
 const chartData = {
@@ -46,9 +45,9 @@ const StatCard = ({
   change?: string;
   isNegative?: boolean;
 }) => (
-  <Card className='bg-white border-0 shadow-sm'>
-    <CardContent className='p-6'>
-      <div className='flex items-center justify-between'>
+  <Card className='bg-white border-0 shadow-lg'>
+    <CardContent className='p-'>
+      <div className='flex items-center gap-4'>
         <div className='p-3 bg-[#aaa3a34f] rounded-full'>
           <Icon className='h-6 w-6 text-gray-600' />
         </div>
@@ -80,7 +79,7 @@ const LineChart = ({
 }) => {
   const maxY = 4500;
   const chartHeight = 300;
-  const chartWidth = 800;
+  const chartWidth = 1500;
   const padding = 60;
 
   const getYPosition = (value: number) => {
@@ -105,7 +104,7 @@ const LineChart = ({
   const lastMonthPath = createPath(data.lastMonth);
 
   return (
-    <div className='w-full overflow-x-auto'>
+    <div className='min-w-full overflow-x-auto'>
       <svg width={chartWidth} height={chartHeight} className='min-w-full'>
         {/* Grid lines */}
         {[0, 1000, 2000, 3000, 4000].map((value) => (
@@ -216,39 +215,6 @@ export default function Dashboard() {
 
   return (
     <div className='min-h-screen bg-transparent'>
-      {/* Header */}
-      <div className='bg-white border-b border-gray-200'>
-        <div className='max-w-8xl mx-auto px-6'>
-          <div className='flex items-center justify-between py-6'>
-            <div>
-              <h1 className='text-2xl font-bold text-gray-900'>
-                Welcome, Daissy
-              </h1>
-              <p className='text-gray-600 mt-1'>Have a nice day</p>
-            </div>
-            <div className='flex items-center gap-4'>
-              <Button variant='ghost' size='icon' className='relative'>
-                <Bell className='h-5 w-5' />
-                <span className='absolute -top-1 -right-1 h-3 w-3 bg-red-500 rounded-full'></span>
-              </Button>
-              <div className='flex items-center gap-3'>
-                <Avatar className='h-10 w-10'>
-                  <AvatarImage
-                    src='/placeholder.svg?height=40&width=40'
-                    alt='Daissy'
-                  />
-                  <AvatarFallback>D</AvatarFallback>
-                </Avatar>
-                <div className='hidden sm:block'>
-                  <p className='text-sm font-medium text-gray-900'>Daissy</p>
-                  <p className='text-xs text-gray-500'>Super admin</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
       {/* Main Content */}
       <div className='py-8'>
         {/* Stats Cards */}
@@ -272,7 +238,7 @@ export default function Dashboard() {
         </div>
 
         {/* Chart Section */}
-        <Card className='bg-white border-0 shadow-sm'>
+        <Card className=' bg-white border-0 shadow-sm'>
           <CardContent className='p-6'>
             <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6'>
               <div>
@@ -313,7 +279,9 @@ export default function Dashboard() {
                 </div>
               </div>
             </div>
-            <LineChart data={chartData} selectedPeriod={selectedPeriod} />
+            <div>
+              <LineChart data={chartData} selectedPeriod={selectedPeriod} />
+            </div>
           </CardContent>
         </Card>
       </div>

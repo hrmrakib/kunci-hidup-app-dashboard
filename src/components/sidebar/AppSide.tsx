@@ -81,11 +81,25 @@ export default function DashboardSidebar() {
                 label='Dashboard'
                 active={pathname === "/"}
               />
+
               <NavItem
-                href='/users'
+                href='/user-management'
                 icon={Users}
-                label='Users'
-                active={pathname === "/users" || pathname.startsWith("/users")}
+                label='User Management'
+                active={
+                  pathname === "/user-management" ||
+                  pathname.startsWith("/user-management")
+                }
+              />
+
+              <NavItem
+                href='/administrators'
+                icon={Settings}
+                label='Administrators'
+                active={
+                  pathname === "/administrators" ||
+                  pathname.startsWith("/administrators/")
+                }
               />
 
               <NavItem
@@ -207,9 +221,10 @@ function NavItem({ href, icon: Icon, label, active = true }: NavItemProps) {
           >
             {label}
           </span>
-        {active && <div className="absolute -left-6 h-10 w-2.5 bg-sidebar-link-bg rounded-r-2xl"></div>}
+          {active && (
+            <div className='absolute -left-6 h-10 w-2.5 bg-sidebar-link-bg rounded-r-2xl'></div>
+          )}
         </Link>
-
       </SidebarMenuButton>
     </SidebarMenuItem>
   );
