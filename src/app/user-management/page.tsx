@@ -159,27 +159,27 @@ export default function UserListPage() {
           {/* Desktop Table */}
           <div className='hidden md:block'>
             <table className='w-full'>
-              <thead className='bg-[#FEAA39]'>
+              <thead className='bg-table-header-bg'>
                 <tr>
-                  <th className='px-6 py-4 text-left text-sm font-medium text-white'>
+                  <th className='px-6 py-4 text-left text-sm font-medium text-table-header-color'>
                     Sl no.
                   </th>
-                  <th className='px-6 py-4 text-left text-sm font-medium text-white'>
+                  <th className='px-6 py-4 text-left text-sm font-medium text-table-header-color'>
                     Profile
                   </th>
-                  <th className='px-6 py-4 text-left text-sm font-medium text-white'>
+                  <th className='px-6 py-4 text-left text-sm font-medium text-table-header-color'>
                     Name
                   </th>
-                  <th className='px-6 py-4 text-left text-sm font-medium text-white'>
+                  <th className='px-6 py-4 text-left text-sm font-medium text-table-header-color'>
                     Email
                   </th>
-                  <th className='px-6 py-4 text-left text-sm font-medium text-white'>
+                  <th className='px-6 py-4 text-left text-sm font-medium text-table-header-color'>
                     Contact Number
                   </th>
-                  <th className='px-6 py-4 text-left text-sm font-medium text-white'>
+                  <th className='px-6 py-4 text-left text-sm font-medium text-table-header-color'>
                     Answer
                   </th>
-                  <th className='px-6 py-4 text-left text-sm font-medium text-white'>
+                  <th className='px-6 py-4 text-left text-sm font-medium text-table-header-color'>
                     Action
                   </th>
                 </tr>
@@ -187,13 +187,13 @@ export default function UserListPage() {
               <tbody className='divide-y divide-gray-200'>
                 {currentUsers.map((user) => (
                   <tr key={user.id} className='hover:bg-gray-50'>
-                    <td className='px-6 py-4 text-sm text-gray-900'>
+                    <td className='px-6 py-4 text-base text-table-color font-medium'>
                       {user.slNo}
                     </td>
                     <td className='px-6 py-4'>
                       <Avatar className='h-10 w-10'>
                         <AvatarImage
-                          src={user.profileImage || "/placeholder.svg"}
+                          src={user.profileImage || "/placeholder.png"}
                           alt={user.name}
                         />
                         <AvatarFallback>
@@ -204,13 +204,13 @@ export default function UserListPage() {
                         </AvatarFallback>
                       </Avatar>
                     </td>
-                    <td className='px-6 py-4 text-sm text-gray-900'>
+                    <td className='px-6 py-4 text-base text-table-color font-medium'>
                       {user.name}
                     </td>
-                    <td className='px-6 py-4 text-sm text-gray-900'>
+                    <td className='px-6 py-4 text-base text-table-color font-medium'>
                       {user.email}
                     </td>
-                    <td className='px-6 py-4 text-sm text-gray-900'>
+                    <td className='px-6 py-4 text-base text-table-color font-medium'>
                       {user.contactNumber}
                     </td>
                     <td className='px-6 py-4'>
@@ -446,15 +446,22 @@ export default function UserListPage() {
             </DialogHeader>
             <div className='space-y-4'>
               {mockAnswers.map((item, index) => (
-                <div key={index} className='space-y-2 bg-[#FFF7EB] p-2 rounded-lg'>
+                <div
+                  key={index}
+                  className='space-y-2 bg-[#FFF7EB] p-2 rounded-lg'
+                >
                   <div>
-                    <span className='font-medium text-sm text-black'>Question: </span>
+                    <span className='font-medium text-sm text-black'>
+                      Question:{" "}
+                    </span>
                     <span className='text-sm text-gray-900'>
                       {item.question}
                     </span>
                   </div>
                   <div>
-                    <span className='font-medium text-sm text-black'>Answer: </span>
+                    <span className='font-medium text-sm text-black'>
+                      Answer:{" "}
+                    </span>
                     <span className='text-sm text-gray-900'>{item.answer}</span>
                   </div>
                 </div>

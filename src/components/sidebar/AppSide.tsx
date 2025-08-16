@@ -103,36 +103,41 @@ export default function DashboardSidebar() {
               />
 
               <NavItem
-                href='/services'
+                href='/subscribers'
                 icon={Settings}
-                label='Services'
+                label='Subscriber'
                 active={
-                  pathname === "/services" || pathname.startsWith("/services/")
+                  pathname === "/subscriber" ||
+                  pathname.startsWith("/subscriber/")
                 }
               />
-
               <NavItem
-                href='/contacts'
+                href='/spiral-management'
                 icon={Settings}
-                label='Contacts'
+                label='Spiral Management'
                 active={
-                  pathname === "/contacts" || pathname.startsWith("/contacts/")
+                  pathname === "/spiral-management" ||
+                  pathname.startsWith("/spiral-management/")
                 }
               />
-
               <NavItem
-                href='/blog'
-                icon={Users}
-                label='Blog'
-                active={pathname === "/blog" || pathname.startsWith("/blog/")}
+                href='/voice-drop-library'
+                icon={Settings}
+                label='Voice Drop Library'
+                active={
+                  pathname === "/voice-drop-library" ||
+                  pathname.startsWith("/voice-drop-library/")
+                }
               />
               <NavItem
-                href='/faq'
-                icon={Users}
-                label='FAQ'
-                active={pathname === "/faq" || pathname.startsWith("/faq/")}
+                href='/journal-pro-manager'
+                icon={Settings}
+                label='Journal Pro. Manager'
+                active={
+                  pathname === "/journal-pro-manager" ||
+                  pathname.startsWith("/journal-pro-manager/")
+                }
               />
-
               <NavItem
                 href='/setting'
                 icon={Settings}
