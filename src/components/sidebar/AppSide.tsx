@@ -222,7 +222,9 @@ function NavItem({ href, icon: Icon, label, active = true }: NavItemProps) {
         >
           <Icon size={18} />
           <span
-            className={`text-lg ${active ? "text-sidebarActiveColor" : ""}`}
+            className={`text-lg text-nowrap ${
+              active ? "text-sidebarActiveColor" : ""
+            }`}
           >
             {label}
           </span>
