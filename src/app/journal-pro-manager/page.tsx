@@ -90,7 +90,7 @@ export default function JournalPromptManagerPage() {
 
   return (
     <div className='min-h-screen bg-gray-50 p-4 md:p-6'>
-      <div className='mx-auto max-w-7xl'>
+      <div className=''>
         {/* Header */}
         <div className='mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between'>
           <Link href='/journal-prompt-manager/add'>
