@@ -23,7 +23,6 @@ export default function CreateSpiralPage() {
   const [spiralName, setSpiralName] = useState("");
   const [spiralDetails, setSpiralDetails] = useState("");
   const [focusPoint, setFocusPoint] = useState("");
-
   const [days, setDays] = useState<DayData[]>(
     Array.from({ length: 7 }, (_, i) => ({
       id: i + 1,
@@ -72,21 +71,29 @@ export default function CreateSpiralPage() {
 
   return (
     <div className='min-h-screen bg-gray-50 p-4 md:p-6'>
-      <div className='max-w-4xl mx-auto'>
+      <div className=''>
         {/* Header */}
         <div className='flex items-center gap-4 mb-8'>
-          <Link href='/journal-prompts'>
-            <Button variant='ghost' size='sm'>
+          <Link
+            href='/journal-prompts'
+            className='flex items-center text-gray-900'
+          >
+            <Button
+              variant='ghost'
+              size='sm'
+              onClick={() => router.back()}
+              className='cursor-pointer'
+            >
               <ArrowLeft className='w-4 h-4 mr-2' />
-              Create New Spiral
             </Button>
+            Create New Spiral
           </Link>
         </div>
 
         {/* Form */}
         <div className='space-y-6'>
           {/* Basic Info */}
-          <Card>
+          <Card className='w-1/2'>
             <CardContent className='p-6 space-y-4'>
               <div>
                 <label className='block text-sm font-medium text-gray-700 mb-2'>
@@ -96,6 +103,7 @@ export default function CreateSpiralPage() {
                   placeholder='Enter spiral name'
                   value={spiralName}
                   onChange={(e) => setSpiralName(e.target.value)}
+                  className='text-black border !border-gray-400'
                 />
               </div>
 
@@ -104,10 +112,11 @@ export default function CreateSpiralPage() {
                   Spiral Details:
                 </label>
                 <Textarea
+                  className='text-black border !border-gray-400'
                   placeholder='Enter spiral details'
                   value={spiralDetails}
                   onChange={(e: any) => setSpiralDetails(e.target.value)}
-                  rows={4}
+                  rows={6}
                 />
               </div>
 
@@ -117,6 +126,7 @@ export default function CreateSpiralPage() {
                 </label>
                 <Input
                   placeholder='Enter focus point'
+                  className='text-black border !border-gray-400'
                   value={focusPoint}
                   onChange={(e) => setFocusPoint(e.target.value)}
                 />
@@ -130,7 +140,7 @@ export default function CreateSpiralPage() {
               <Card
                 key={day.id}
                 className={`${
-                  day.enabled ? "border-blue-200" : "border-gray-200 opacity-60"
+                  day.enabled ? "border-[#FEAA39]" : "border-gray-200 opacity-60"
                 }`}
               >
                 <CardContent className='p-6'>
@@ -149,6 +159,7 @@ export default function CreateSpiralPage() {
                       </label>
                       <Textarea
                         placeholder='Enter journal prompt'
+                        className='text-black border !border-gray-400'
                         value={day.journalPrompt}
                         onChange={(e: any) =>
                           handleJournalPromptChange(day.id, e.target.value)

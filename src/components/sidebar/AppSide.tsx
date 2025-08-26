@@ -3,22 +3,7 @@
 import type React from "react";
 
 import Link from "next/link";
-import {
-  LayoutDashboard,
-  DollarSign,
-  Users,
-  Ticket,
-  Settings,
-  LogOut,
-  NotebookPen,
-  BookType,
-  Crown,
-  BadgeAlert,
-  Siren,
-  ShoppingCart,
-  BookCheck,
-  ShieldAlert,
-} from "lucide-react";
+import { LayoutDashboard, Users, Settings } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
   Sidebar,
@@ -30,9 +15,7 @@ import {
 } from "@/components/ui/sidebar";
 import { usePathname, useRouter } from "next/navigation";
 import Image from "next/image";
-// import LogoutModal from "./logout-modal";
 import { useState } from "react";
-// import { logout } from "@/service/authService";
 
 export default function DashboardSidebar() {
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
@@ -107,10 +90,11 @@ export default function DashboardSidebar() {
                 icon={Settings}
                 label='Subscriber'
                 active={
-                  pathname === "/subscriber" ||
-                  pathname.startsWith("/subscriber/")
+                  pathname === "/subscribers" ||
+                  pathname.startsWith("/subscribers/")
                 }
               />
+
               <NavItem
                 href='/spiral-management'
                 icon={Settings}
@@ -120,6 +104,7 @@ export default function DashboardSidebar() {
                   pathname.startsWith("/spiral-management/")
                 }
               />
+
               <NavItem
                 href='/voice-drop-library'
                 icon={Settings}

@@ -82,11 +82,14 @@ export default function EditSpiralPage({ params }: { params: { id: string } }) {
       <div className='max-w-4xl mx-auto'>
         {/* Header */}
         <div className='flex items-center gap-4 mb-8'>
-          <Link href='/journal-prompts'>
-            <Button variant='ghost' size='sm'>
+          <Link
+            href='/journal-prompts'
+            className='flex items-center text-gray-900'
+          >
+            <Button variant='ghost' size='sm' onClick={() => router.back()}>
               <ArrowLeft className='w-4 h-4 mr-2' />
-              Edit Spiral
             </Button>
+            Edit Spiral
           </Link>
         </div>
 
@@ -112,6 +115,7 @@ export default function EditSpiralPage({ params }: { params: { id: string } }) {
                 </label>
                 <Textarea
                   placeholder='Enter spiral details'
+                  className='text-black border !border-gray-400'
                   value={spiralDetails}
                   onChange={(e) => setSpiralDetails(e.target.value)}
                   rows={4}

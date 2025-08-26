@@ -21,7 +21,7 @@ const mockUsers = Array.from({ length: 60 }, (_, i) => ({
   name: "Hazel Janis",
   email: "janis202@gmail.com",
   contactNumber: "+626-445-4928",
-  profileImage: "/placeholder.svg?height=40&width=40",
+  profileImage: "/user.jpg",
   country: "Indonesia",
   disableAccess: false,
   deleteAccount: false,
@@ -193,8 +193,10 @@ export default function UserListPage() {
                     <td className='px-6 py-4'>
                       <Avatar className='h-10 w-10'>
                         <AvatarImage
-                          src={user.profileImage || "/placeholder.png"}
+                          src={user.profileImage || "/user.jpg"}
                           alt={user.name}
+                          width={40}
+                          height={40}
                         />
                         <AvatarFallback>
                           {user.name
@@ -354,7 +356,7 @@ export default function UserListPage() {
         <Dialog open={actionModalOpen} onOpenChange={setActionModalOpen}>
           <DialogContent className='sm:max-w-md'>
             <DialogHeader className='flex flex-row items-center justify-between space-y-0 pb-4'>
-              <DialogTitle className='text-lg font-semibold'>
+              <DialogTitle className='text-lg font-semibold text-black'>
                 Action
               </DialogTitle>
               <Button
@@ -368,34 +370,54 @@ export default function UserListPage() {
             </DialogHeader>
             {selectedUser && (
               <div className='space-y-4'>
-                <div className='grid grid-cols-2 gap-4 text-sm'>
-                  <div>
-                    <Label className='text-gray-600'>User Id:</Label>
-                    <p className='font-medium'>{selectedUser.slNo}</p>
+                <div className='flex flex-col gap-5 text-sm'>
+                  <div className='flex items-center justify-between border-b pb-5'>
+                    <Label className='text-[#333338] text-xl font-medium'>
+                      User Id:
+                    </Label>
+                    <p className='text-[#3e3e41] text-base font-medium'>
+                      {selectedUser.slNo}
+                    </p>
                   </div>
-                  <div>
-                    <Label className='text-gray-600'>User Name:</Label>
-                    <p className='font-medium'>{selectedUser.name}</p>
+                  <div className='flex items-center justify-between border-b pb-5'>
+                    <Label className='text-[#333338] text-xl font-medium'>
+                      User Name:
+                    </Label>
+                    <p className='text-[#3e3e41] text-base font-medium'>
+                      {selectedUser.name}
+                    </p>
                   </div>
-                  <div>
-                    <Label className='text-gray-600'>Email Address:</Label>
-                    <p className='font-medium'>{selectedUser.email}</p>
+                  <div className='flex items-center justify-between border-b pb-5'>
+                    <Label className='text-[#333338] text-xl font-medium'>
+                      Email Address:
+                    </Label>
+                    <p className='text-[#3e3e41] text-base font-medium'>
+                      {selectedUser.email}
+                    </p>
                   </div>
-                  <div>
-                    <Label className='text-gray-600'>Contact Number:</Label>
-                    <p className='font-medium'>{selectedUser.contactNumber}</p>
+                  <div className='flex items-center justify-between border-b pb-5'>
+                    <Label className='text-[#333338] text-xl font-medium'>
+                      Contact Number:
+                    </Label>
+                    <p className='text-[#3e3e41] text-base font-medium'>
+                      {selectedUser.contactNumber}
+                    </p>
                   </div>
-                  <div className='col-span-2'>
-                    <Label className='text-gray-600'>Country:</Label>
-                    <p className='font-medium'>{selectedUser.country}</p>
+                  <div className='flex items-center justify-between border-b pb-5'>
+                    <Label className='text-[#333338] text-xl font-medium'>
+                      Country:
+                    </Label>
+                    <p className='text-[#3e3e41] text-base font-medium'>
+                      {selectedUser.country}
+                    </p>
                   </div>
                 </div>
 
                 <div className='space-y-4 pt-4'>
-                  <div className='flex items-center justify-between'>
+                  <div className='flex items-center justify-between border-b pb-5'>
                     <Label
                       htmlFor='disable-access'
-                      className='text-sm font-medium'
+                      className='text-[#333338] text-xl font-medium'
                     >
                       Disable User Access
                     </Label>
@@ -410,18 +432,11 @@ export default function UserListPage() {
                   <div className='flex items-center justify-between'>
                     <Label
                       htmlFor='delete-account'
-                      className='text-sm font-medium'
+                      className='text-[#333338] text-xl font-medium'
                     >
                       Delete User Account
                     </Label>
-                    <Switch
-                      id='delete-account'
-                      checked={selectedUser.deleteAccount}
-                      onCheckedChange={(checked) =>
-                        handleToggleChange("deleteAccount", checked)
-                      }
-                      className='data-[state=checked]:bg-red-500'
-                    />
+                    <Button className='bg-red-500'>Delete</Button>
                   </div>
                 </div>
               </div>

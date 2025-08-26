@@ -5,8 +5,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Search, Plus, Edit, Trash2 } from "lucide-react";
+import { Search, Plus, Edit, Trash2, X } from "lucide-react";
 import Link from "next/link";
+import { Dialog, DialogContent, DialogHeader } from "@/components/ui/dialog";
 
 interface Spiral {
   id: string;
@@ -94,6 +95,9 @@ const mockSpirals: Spiral[] = [
 export default function JournalPromptsPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [spirals, setSpirals] = useState<Spiral[]>(mockSpirals);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [isDeleteConfirm, setIsDeleteConfirm] = useState(false);
+  const [deleteItemId, setDeleteItemId] = useState<string | null>(null);
 
   const filteredSpirals = spirals.filter(
     (spiral) =>
@@ -105,7 +109,9 @@ export default function JournalPromptsPage() {
   );
 
   const handleDelete = (id: string) => {
-    setSpirals(spirals.filter((spiral) => spiral.id !== id));
+    if (isDeleteConfirm) {
+      setSpirals(spirals.filter((spiral) => spiral.id !== id));
+    }
   };
 
   return (
@@ -114,8 +120,8 @@ export default function JournalPromptsPage() {
         {/* Header */}
         <div className='flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8'>
           <div>
-            <Link href='/journal-prompts/create'>
-              <Button className='bg-blue-600 hover:bg-blue-700 text-white'>
+            <Link href='/spiral-management/create'>
+              <Button className='bg-[#006699] hover:bg-[#006699] text-white cursor-pointer'>
                 <Plus className='w-4 h-4 mr-2' />
                 Add new Spiral
               </Button>
@@ -142,15 +148,15 @@ export default function JournalPromptsPage() {
           {filteredSpirals.map((spiral) => (
             <Card
               key={spiral.id}
-              className='border-2 border-orange-200 hover:border-orange-300 transition-colors'
+              className='bg-[#FFF7EB] border-2 border-orange-200 hover:border-orange-300 transition-colors'
             >
-              <CardHeader className='pb-4'>
-                <CardTitle className='text-xl text-orange-600 text-center'>
+              <CardHeader>
+                <CardTitle className='text-xl text-[#FEAA39] text-center'>
                   {spiral.title}
                 </CardTitle>
               </CardHeader>
               <CardContent className='space-y-4'>
-                <p className='text-gray-700 text-center italic leading-relaxed'>
+                <p className='text-[#404040] text-center leading-relaxed'>
                   {spiral.description}
                 </p>
 
@@ -174,12 +180,12 @@ export default function JournalPromptsPage() {
 
                 <div className='flex gap-3 pt-4'>
                   <Link
-                    href={`/journal-prompts/edit/${spiral.id}`}
+                    href={`/spiral-management/edit/${spiral.id}`}
                     className='flex-1'
                   >
                     <Button
                       variant='outline'
-                      className='w-full border-gray-300 hover:bg-gray-50 bg-transparent'
+                      className='w-full border !border-[#222222] hover:bg-gray-50 bg-transparent'
                     >
                       <Edit className='w-4 h-4 mr-2' />
                       Edit
@@ -187,8 +193,8 @@ export default function JournalPromptsPage() {
                   </Link>
                   <Button
                     variant='outline'
-                    className='flex-1 border-red-300 text-red-600 hover:bg-red-50 bg-transparent'
-                    onClick={() => handleDelete(spiral.id)}
+                    className='flex-1 !border-red-300 text-red-600 hover:bg-red-50 bg-transparent cursor-pointer'
+                    onClick={() => setIsDeleteModalOpen(true)}
                   >
                     <Trash2 className='w-4 h-4 mr-2' />
                     Delete
@@ -206,6 +212,44 @@ export default function JournalPromptsPage() {
             </p>
           </div>
         )}
+
+        <Dialog open={isDeleteModalOpen} onOpenChange={setIsDeleteModalOpen}>
+          <DialogContent className='sm:max-w-sm'>
+            <DialogHeader>
+              <Button
+                variant='ghost'
+                size='sm'
+                onClick={() => setIsDeleteModalOpen(false)}
+                className='absolute right-4 top-4 text-white rounded-full w-8 h-8 p-0'
+              >
+                <X className='w-4 h-4' />
+              </Button>
+            </DialogHeader>
+
+            <div className='text-center py-6'>
+              <h3 className='text-2xl font-semibold text-gray-900 mb-6'>
+                Are You Sure?
+              </h3>
+
+              <div className='flex gap-3'>
+                <Button
+                  variant='outline'
+                  onClick={() => setIsDeleteModalOpen(false)}
+                  className='flex-1 bg-[#FEAA39] hover:bg-[#FEAA39] text-[#FEAA39] border !border-[#FEAA39] hover:!border-[#000000] cursor-pointer'
+                >
+                  Cancel
+                </Button>
+                <Button
+                  onClick={() => handleDelete("5465")}
+                  className='flex-1 bg-[#FF0000] hover:bg-red-600 cursor-pointer text-white flex items-center justify-center gap-2'
+                >
+                  <Trash2 className='w-4 h-4' />
+                  Delete Account
+                </Button>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   );
