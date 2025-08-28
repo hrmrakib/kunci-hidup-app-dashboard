@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { Button } from "../ui/button";
 import { Bell } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import { usePathname } from "next/navigation";
 
 const Header = () => {
   const [admin, setAdmin] = useState({
@@ -11,6 +12,18 @@ const Header = () => {
     role: "Super admin",
     image: "/admin.jpeg",
   });
+  const pathname = usePathname();
+
+  if (
+    pathname === "/signup" ||
+    pathname === "/signin" ||
+    pathname === "/forget-password" ||
+    pathname === "/verify-password" ||
+    pathname === "/verify-otp" ||
+    pathname === "/reset-password"
+  ) {
+    return null;
+  }
   return (
     <div className='bg-white border-b border-gray-200'>
       <div className='max-w-8xl mx-auto px-6'>

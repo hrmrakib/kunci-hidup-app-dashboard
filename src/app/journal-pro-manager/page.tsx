@@ -93,8 +93,8 @@ export default function JournalPromptManagerPage() {
       <div className=''>
         {/* Header */}
         <div className='mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between'>
-          <Link href='/journal-prompt-manager/add'>
-            <Button className='bg-blue-600 hover:bg-blue-700 text-white w-fit'>
+          <Link href='/journal-pro-manager/add' className='cursor-pointer'>
+            <Button className='bg-[#FEAA39] text-white w-fit cursor-pointer'>
               <Plus className='mr-2 h-4 w-4' />
               Add new Prompt
             </Button>
@@ -161,19 +161,19 @@ export default function JournalPromptManagerPage() {
 
                 <div className='mt-4 flex gap-2'>
                   <Link
-                    href={`/journal-prompt-manager/edit/${prompt.id}`}
-                    className='flex-1'
+                    href={`/journal-pro-manager/edit/${prompt.id}`}
+                    className='flex-1 border border-[#404040] rounded-2xl text-[#404040]'
                   >
                     <Button
                       variant='outline'
-                      className='w-full border-orange-300 text-orange-600 hover:bg-orange-50 bg-transparent'
+                      className='w-full border-orange-300 text-[#404040] hover:bg-orange-50 bg-transparent rounded-2xl'
                     >
                       Edit
                     </Button>
                   </Link>
                   <Button
                     variant='outline'
-                    className='flex-1 border-red-300 text-red-600 hover:bg-red-50 bg-transparent'
+                    className='flex-1  text-red-600 hover:bg-red-50 !border !border-red-500 bg-transparent rounded-2xl'
                     onClick={() => handleDelete(prompt.id)}
                   >
                     Delete

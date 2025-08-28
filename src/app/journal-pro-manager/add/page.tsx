@@ -74,7 +74,7 @@ export default function AddJournalPromptPage() {
   };
 
   const handleCancel = () => {
-    router.push("/journal-prompt-manager");
+    router.push("/journal-pro-manager");
   };
 
   return (
@@ -82,9 +82,9 @@ export default function AddJournalPromptPage() {
       <div className='mx-auto max-w-2xl'>
         {/* Header */}
         <div className='mb-6 flex items-center gap-3'>
-          <Link href='/journal-prompt-manager'>
+          <Link href='/journal-pro-manager'>
             <Button variant='ghost' size='sm' className='p-2'>
-              <ArrowLeft className='h-4 w-4' />
+              <ArrowLeft className='h-4 w-4 text-black' />
             </Button>
           </Link>
           <h1 className='text-xl font-semibold text-gray-900'>
@@ -98,7 +98,7 @@ export default function AddJournalPromptPage() {
             <form onSubmit={handleSubmit} className='space-y-6'>
               {/* Journal Prompt */}
               <div>
-                <label className='block text-sm font-medium text-gray-700 mb-2'>
+                <label className='block text-base font-medium text-[#000000] mb-2'>
                   Journal Prompt :
                 </label>
                 <Textarea
@@ -107,15 +107,15 @@ export default function AddJournalPromptPage() {
                   onChange={(e) =>
                     setFormData({ ...formData, prompt: e.target.value })
                   }
-                  className='min-h-[120px] resize-none'
+                  className='min-h-[120px] resize-none !bg-[#F4F4F4] border border-gray-300'
                   required
                 />
               </div>
 
               {/* Category and Use Case */}
-              <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
-                <div>
-                  <label className='block text-sm font-medium text-gray-700 mb-2'>
+              <div className='flex items-center justify-between gap-4'>
+                <div className='w-1/2'>
+                  <label className='block text-base font-medium text-[#000000] mb-2'>
                     Category:
                   </label>
                   <Select
@@ -124,7 +124,7 @@ export default function AddJournalPromptPage() {
                       setFormData({ ...formData, category: value })
                     }
                   >
-                    <SelectTrigger>
+                    <SelectTrigger className='w-full'>
                       <SelectValue placeholder='Select' />
                     </SelectTrigger>
                     <SelectContent>
@@ -137,8 +137,8 @@ export default function AddJournalPromptPage() {
                   </Select>
                 </div>
 
-                <div>
-                  <label className='block text-sm font-medium text-gray-700 mb-2'>
+                <div className='w-1/2'>
+                  <label className='block text-base font-medium text-[#000000] mb-2'>
                     Use Case:
                   </label>
                   <Select
@@ -147,7 +147,7 @@ export default function AddJournalPromptPage() {
                       setFormData({ ...formData, useCase: value })
                     }
                   >
-                    <SelectTrigger>
+                    <SelectTrigger className='w-full'>
                       <SelectValue placeholder='Select' />
                     </SelectTrigger>
                     <SelectContent>
@@ -162,9 +162,9 @@ export default function AddJournalPromptPage() {
               </div>
 
               {/* Emotion and Activation Status */}
-              <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
-                <div>
-                  <label className='block text-sm font-medium text-gray-700 mb-2'>
+              <div className='flex items-center justify-between gap-4'>
+                <div className='w-1/2'>
+                  <label className='block text-base font-medium text-[#000000] mb-2'>
                     Emotion:
                   </label>
                   <Select
@@ -173,7 +173,7 @@ export default function AddJournalPromptPage() {
                       setFormData({ ...formData, emotion: value })
                     }
                   >
-                    <SelectTrigger>
+                    <SelectTrigger className='w-full'>
                       <SelectValue placeholder='Select' />
                     </SelectTrigger>
                     <SelectContent>
@@ -186,8 +186,8 @@ export default function AddJournalPromptPage() {
                   </Select>
                 </div>
 
-                <div>
-                  <label className='block text-sm font-medium text-gray-700 mb-2'>
+                <div className='w-1/2'>
+                  <label className='block text-base font-medium text-[#000000] mb-2'>
                     Activation Status:
                   </label>
                   <Select
@@ -196,7 +196,7 @@ export default function AddJournalPromptPage() {
                       setFormData({ ...formData, activationStatus: value })
                     }
                   >
-                    <SelectTrigger>
+                    <SelectTrigger className='w-full'>
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -224,13 +224,13 @@ export default function AddJournalPromptPage() {
                   type='button'
                   variant='outline'
                   onClick={handleCancel}
-                  className='flex-1 border-orange-300 text-orange-600 hover:bg-orange-50 bg-transparent'
+                  className='flex-1 !border-[#FEAA39] !text-[#FEAA39] hover:bg-orange-50 bg-transparent cursor-pointer'
                 >
                   Cancel
                 </Button>
                 <Button
                   type='submit'
-                  className='flex-1 bg-orange-500 hover:bg-orange-600 text-white'
+                  className='flex-1 bg-[#FEAA39] hover:bg-[#FEAA39] text-white cursor-pointer'
                 >
                   Submit
                 </Button>

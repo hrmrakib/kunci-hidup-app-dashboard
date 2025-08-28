@@ -30,6 +30,7 @@ export default function DashboardSidebar() {
   };
 
   if (
+    pathname === "/signup" ||
     pathname === "/signin" ||
     pathname === "/forget-password" ||
     pathname === "/verify-password" ||
@@ -114,6 +115,7 @@ export default function DashboardSidebar() {
                   pathname.startsWith("/voice-drop-library/")
                 }
               />
+
               <NavItem
                 href='/journal-pro-manager'
                 icon={Settings}
@@ -123,12 +125,13 @@ export default function DashboardSidebar() {
                   pathname.startsWith("/journal-pro-manager/")
                 }
               />
+
               <NavItem
-                href='/setting'
+                href='/settings'
                 icon={Settings}
                 label='Setting'
                 active={
-                  pathname === "/setting" || pathname.startsWith("/setting/")
+                  pathname === "/settings" || pathname.startsWith("/settings/")
                 }
               />
             </SidebarMenu>

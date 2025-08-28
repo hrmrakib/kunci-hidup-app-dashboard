@@ -71,7 +71,7 @@ export default function SettingsPage() {
                       <Link href={section.href}>
                         <Button
                           variant='outline'
-                          className='w-full sm:w-auto bg-transparent'
+                          className='w-full sm:w-auto bg-transparent text-black'
                         >
                           Manage {section.title}
                         </Button>

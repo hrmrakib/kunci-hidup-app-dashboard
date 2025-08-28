@@ -79,7 +79,7 @@ export default function AddVoicePage() {
   };
 
   const handleCancel = () => {
-    router.push("/voices");
+    router.push("/voice-drop-library");
   };
 
   return (

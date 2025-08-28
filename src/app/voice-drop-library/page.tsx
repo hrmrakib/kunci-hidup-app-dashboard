@@ -236,7 +236,7 @@ export default function VoicesPage() {
       <div className='flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6'>
         <div className='flex items-center gap-4'>
           <Link href='/voice-drop-library/add'>
-            <Button className='bg-blue-600 hover:bg-blue-700 text-white'>
+            <Button className='bg-[#FEAA39] text-white'>
               <Plus className='w-4 h-4 mr-2' />
               Add new Voice
             </Button>
@@ -257,7 +257,7 @@ export default function VoicesPage() {
 
       {/* Desktop Table */}
       <div className='hidden md:block bg-white rounded-lg shadow-sm border overflow-hidden'>
-        <div className='bg-orange-500 text-white'>
+        <div className='bg-[#FEAA39] text-white'>
           <div className='grid grid-cols-7 gap-4 p-4 font-medium'>
             <div>Title</div>
             <div>Duration</div>
@@ -300,7 +300,7 @@ export default function VoicesPage() {
                   onClick={() => handleActionClick(voice)}
                   className='p-1 h-8 w-8'
                 >
-                  <Info className='w-4 h-4' />
+                  <Info className='w-4 h-4 text-gray-700' />
                 </Button>
                 <Button
                   variant='ghost'
@@ -409,7 +409,7 @@ export default function VoicesPage() {
       <Dialog open={isActionModalOpen} onOpenChange={setIsActionModalOpen}>
         <DialogContent className='sm:max-w-md'>
           <DialogHeader>
-            <DialogTitle className='text-xl font-semibold text-center'>
+            <DialogTitle className='text-xl text-gray-900 font-semibold text-center'>
               Action
             </DialogTitle>
           </DialogHeader>
@@ -426,8 +426,8 @@ export default function VoicesPage() {
                     <span className='text-xs font-medium'>📁</span>
                   </div>
                   <div className='flex-1'>
-                    <div className='text-sm font-medium'>gfx_audio-mp3</div>
-                    <div className='text-xs text-gray-500'>
+                    <div className='text-sm font-medium text-gray-800'>gfx_audio-mp3</div>
+                    <div className='text-xs text-gray-900'>
                       0:00 - {selectedVoice.duration}
                     </div>
                   </div>
@@ -502,10 +502,10 @@ export default function VoicesPage() {
                   Voice Drop Deletion
                 </span>
                 <Button
-                  variant='destructive'
+                  variant='default'
                   size='sm'
                   onClick={() => handleDeleteVoice(selectedVoice.id)}
-                  className='bg-red-600 hover:bg-red-700'
+                  className='bg-red-700 hover:bg-red-800 cursor-pointer'
                 >
                   <Trash2 className='w-4 h-4 mr-2' />
                   Delete
