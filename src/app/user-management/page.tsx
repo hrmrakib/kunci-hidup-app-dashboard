@@ -11,8 +11,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
+import { useGetAllUsersQuery } from "@/redux/features/user/userAPI";
 
 // Mock data matching the design
 const mockUsers = Array.from({ length: 60 }, (_, i) => ({
@@ -27,48 +27,28 @@ const mockUsers = Array.from({ length: 60 }, (_, i) => ({
   deleteAccount: false,
 }));
 
-// Mock answers data
-const mockAnswers = [
-  {
-    question:
-      "Apakah kamu sering menang ketika kamu main judi secara live dari rumah?",
-    answer: "Yes",
-  },
-  {
-    question:
-      "Apakah kamu sering menang ketika kamu main judi secara live dari rumah?",
-    answer: "Yes",
-  },
-  {
-    question:
-      "Apakah kamu sering menang ketika kamu main judi secara live dari rumah?",
-    answer: "Yes",
-  },
-  {
-    question:
-      "Apakah kamu sering menang ketika kamu main judi secara live dari rumah?",
-    answer: "Yes",
-  },
-  {
-    question:
-      "Apakah kamu sering menang ketika kamu main judi secara live dari rumah?",
-    answer: "Sometimes",
-  },
-  {
-    question:
-      "Apakah kamu sering menang ketika kamu main judi secara live dari rumah?",
-    answer: "No",
-  },
-];
+export interface Answer {
+  question: string;
+  answer: "Yes" | "No";
+  answered_at: string;
+}
+
+export interface UserResponse {
+  user_id: number;
+  profile_pic_url: string | null;
+  full_name: string;
+  email: string;
+  contanct_no: string | null;
+  answers: Answer[];
+}
 
 export default function UserListPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [actionModalOpen, setActionModalOpen] = useState(false);
+  const [answers, setAnswers] = useState<Answer[]>([]);
   const [answersModalOpen, setAnswersModalOpen] = useState(false);
-  const [selectedUser, setSelectedUser] = useState<
-    (typeof mockUsers)[0] | null
-  >(null);
+  const [selectedUser, setSelectedUser] = useState<UserResponse>();
   const itemsPerPage = 10;
 
   // Filter users based on search term
@@ -83,14 +63,15 @@ export default function UserListPage() {
   const totalPages = Math.ceil(filteredUsers.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
-  const currentUsers = filteredUsers.slice(startIndex, endIndex);
+  const { data: users } = useGetAllUsersQuery({});
 
-  const handleActionClick = (user: (typeof mockUsers)[0]) => {
+  const handleActionClick = (user: UserResponse) => {
     setSelectedUser(user);
     setActionModalOpen(true);
   };
 
-  const handleViewAnswerClick = () => {
+  const handleViewAnswerClick = (answers: Answer[]) => {
+    setAnswers(answers);
     setAnswersModalOpen(true);
   };
 
@@ -185,21 +166,21 @@ export default function UserListPage() {
                 </tr>
               </thead>
               <tbody className='divide-y divide-gray-200'>
-                {currentUsers.map((user) => (
-                  <tr key={user.id} className='hover:bg-gray-50'>
+                {users?.results.map((user: UserResponse, index: number) => (
+                  <tr key={user?.user_id} className='hover:bg-gray-50'>
                     <td className='px-6 py-4 text-base text-table-color font-medium'>
-                      {user.slNo}
+                      {index + 1}
                     </td>
                     <td className='px-6 py-4'>
                       <Avatar className='h-10 w-10'>
                         <AvatarImage
-                          src={user.profileImage || "/user.jpg"}
-                          alt={user.name}
+                          src={`${process.env.NEXT_PUBLIC_API_URL}${user?.profile_pic_url}`}
+                          alt={user?.full_name}
                           width={40}
                           height={40}
                         />
                         <AvatarFallback>
-                          {user.name
+                          {user?.full_name
                             .split(" ")
                             .map((n) => n[0])
                             .join("")}
@@ -207,19 +188,19 @@ export default function UserListPage() {
                       </Avatar>
                     </td>
                     <td className='px-6 py-4 text-base text-table-color font-medium'>
-                      {user.name}
+                      {user?.full_name}
                     </td>
                     <td className='px-6 py-4 text-base text-table-color font-medium'>
-                      {user.email}
+                      {user?.email}
                     </td>
                     <td className='px-6 py-4 text-base text-table-color font-medium'>
-                      {user.contactNumber}
+                      {user?.contanct_no}
                     </td>
                     <td className='px-6 py-4'>
                       <Button
                         variant='link'
                         className='p-0 text-blue-600 hover:text-blue-800'
-                        onClick={handleViewAnswerClick}
+                        onClick={() => handleViewAnswerClick(user?.answers)}
                       >
                         <Eye className='mr-1 h-4 w-4' />
                         View Answer
@@ -247,16 +228,16 @@ export default function UserListPage() {
               <h2 className='text-sm font-medium text-white'>User List</h2>
             </div>
             <div className='divide-y divide-gray-200'>
-              {currentUsers.map((user) => (
-                <div key={user.id} className='p-4'>
+              {users?.results?.map((user: UserResponse) => (
+                <div key={user?.user_id} className='p-4'>
                   <div className='flex items-start gap-3'>
                     <Avatar className='h-12 w-12'>
                       <AvatarImage
-                        src={user.profileImage || "/placeholder.svg"}
-                        alt={user.name}
+                        src={`${process.env.NEXT_PUBLIC_API_URL}${user?.profile_pic_url}`}
+                        alt={user?.full_name}
                       />
                       <AvatarFallback>
-                        {user.name
+                        {user?.full_name
                           .split(" ")
                           .map((n) => n[0])
                           .join("")}
@@ -265,21 +246,21 @@ export default function UserListPage() {
                     <div className='flex-1 space-y-2'>
                       <div className='flex items-center justify-between'>
                         <h3 className='font-medium text-gray-900'>
-                          {user.name}
+                          {user?.full_name}
                         </h3>
                         <span className='text-xs text-gray-500'>
-                          {user.slNo}
+                          {user?.user_id}
                         </span>
                       </div>
                       <div className='space-y-1 text-sm text-gray-600'>
-                        <p>{user.email}</p>
-                        <p>{user.contactNumber}</p>
+                        <p>{user?.email}</p>
+                        <p>{user?.contanct_no}</p>
                       </div>
                       <div className='flex items-center justify-between pt-2'>
                         <Button
                           variant='link'
                           className='p-0 text-blue-600 hover:text-blue-800'
-                          onClick={handleViewAnswerClick}
+                          onClick={() => handleViewAnswerClick(user?.answers)}
                         >
                           <Eye className='mr-1 h-4 w-4' />
                           View Answer
@@ -376,7 +357,7 @@ export default function UserListPage() {
                       User Id:
                     </Label>
                     <p className='text-[#3e3e41] text-base font-medium'>
-                      {selectedUser.slNo}
+                      {selectedUser?.user_id}
                     </p>
                   </div>
                   <div className='flex items-center justify-between border-b pb-5'>
@@ -384,7 +365,7 @@ export default function UserListPage() {
                       User Name:
                     </Label>
                     <p className='text-[#3e3e41] text-base font-medium'>
-                      {selectedUser.name}
+                      {selectedUser?.full_name}
                     </p>
                   </div>
                   <div className='flex items-center justify-between border-b pb-5'>
@@ -392,7 +373,7 @@ export default function UserListPage() {
                       Email Address:
                     </Label>
                     <p className='text-[#3e3e41] text-base font-medium'>
-                      {selectedUser.email}
+                      {selectedUser?.email}
                     </p>
                   </div>
                   <div className='flex items-center justify-between border-b pb-5'>
@@ -400,21 +381,21 @@ export default function UserListPage() {
                       Contact Number:
                     </Label>
                     <p className='text-[#3e3e41] text-base font-medium'>
-                      {selectedUser.contactNumber}
+                      {selectedUser?.contanct_no}
                     </p>
                   </div>
-                  <div className='flex items-center justify-between border-b pb-5'>
+                  {/* <div className='flex items-center justify-between border-b pb-5'>
                     <Label className='text-[#333338] text-xl font-medium'>
                       Country:
                     </Label>
                     <p className='text-[#3e3e41] text-base font-medium'>
-                      {selectedUser.country}
+                      {selectedUser?.}
                     </p>
-                  </div>
+                  </div> */}
                 </div>
 
                 <div className='space-y-4 pt-4'>
-                  <div className='flex items-center justify-between border-b pb-5'>
+                  {/* <div className='flex items-center justify-between border-b pb-5'>
                     <Label
                       htmlFor='disable-access'
                       className='text-[#333338] text-xl font-medium'
@@ -428,7 +409,7 @@ export default function UserListPage() {
                         handleToggleChange("disableAccess", checked)
                       }
                     />
-                  </div>
+                  </div> */}
                   <div className='flex items-center justify-between'>
                     <Label
                       htmlFor='delete-account'
@@ -448,7 +429,7 @@ export default function UserListPage() {
           <DialogContent className='sm:max-w-2xl max-h-[80vh] overflow-y-auto'>
             <DialogHeader className='flex flex-row items-center justify-between space-y-0 pb-4'>
               <DialogTitle className='text-lg font-semibold text-black'>
-                All Answers
+                {answers.length === 0 ? "No answers" : "All Answers"}
               </DialogTitle>
               <Button
                 variant='ghost'
@@ -460,7 +441,7 @@ export default function UserListPage() {
               </Button>
             </DialogHeader>
             <div className='space-y-4'>
-              {mockAnswers.map((item, index) => (
+              {answers.map((item, index) => (
                 <div
                   key={index}
                   className='space-y-2 bg-[#FFF7EB] p-2 rounded-lg'
@@ -470,14 +451,16 @@ export default function UserListPage() {
                       Question:{" "}
                     </span>
                     <span className='text-sm text-gray-900'>
-                      {item.question}
+                      {item?.question}
                     </span>
                   </div>
                   <div>
                     <span className='font-medium text-sm text-black'>
                       Answer:{" "}
                     </span>
-                    <span className='text-sm text-gray-900'>{item.answer}</span>
+                    <span className='text-sm text-gray-900'>
+                      {item?.answer}
+                    </span>
                   </div>
                 </div>
               ))}

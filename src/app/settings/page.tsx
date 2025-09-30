@@ -1,17 +1,9 @@
 "use client";
 
-import { useState } from "react";
-import { ChevronDown, User, Lock, FileText } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { User, Lock, ChevronRight, GlobeLock } from "lucide-react";
 import Link from "next/link";
 
 export default function SettingsPage() {
-  const [expandedSection, setExpandedSection] = useState<string | null>(null);
-
-  const toggleSection = (section: string) => {
-    setExpandedSection(expandedSection === section ? null : section);
-  };
-
   const settingsSections = [
     {
       id: "personal",
@@ -27,9 +19,9 @@ export default function SettingsPage() {
     },
     {
       id: "terms",
-      title: "Terms & Conditions",
-      icon: FileText,
-      href: "/settings/terms-conditions",
+      title: "Privacy & Policy",
+      icon: GlobeLock,
+      href: "/settings/privacy-policy",
     },
   ];
 
@@ -40,45 +32,27 @@ export default function SettingsPage() {
 
         <div className='space-y-2'>
           {settingsSections.map((section) => {
-            const Icon = section.icon;
-            const isExpanded = expandedSection === section.id;
+            const Icon = section?.icon;
 
             return (
               <div
                 key={section.id}
                 className='bg-white rounded-lg border border-gray-200 overflow-hidden'
               >
-                <button
-                  onClick={() => toggleSection(section.id)}
+                <Link
+                  href={section?.href}
                   className='w-full flex items-center justify-between p-4 text-left hover:bg-gray-50 transition-colors'
                 >
                   <div className='flex items-center gap-3'>
                     <Icon className='h-5 w-5 text-gray-600' />
                     <span className='text-gray-900 font-medium'>
-                      {section.title}
+                      {section?.title}
                     </span>
                   </div>
-                  <ChevronDown
-                    className={`h-5 w-5 text-gray-400 transition-transform ${
-                      isExpanded ? "rotate-180" : ""
-                    }`}
+                  <ChevronRight
+                    className={`h-5 w-5 text-gray-400 transition-transform`}
                   />
-                </button>
-
-                {isExpanded && (
-                  <div className='px-4 pb-4 border-t border-gray-100'>
-                    <div className='pt-4'>
-                      <Link href={section.href}>
-                        <Button
-                          variant='outline'
-                          className='w-full sm:w-auto bg-transparent text-black'
-                        >
-                          Manage {section.title}
-                        </Button>
-                      </Link>
-                    </div>
-                  </div>
-                )}
+                </Link>
               </div>
             );
           })}
