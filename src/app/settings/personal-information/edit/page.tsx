@@ -76,27 +76,10 @@ export default function PersonalInformationEditPage() {
 
     const res = await updateProfile(formDataToSubmit);
 
-    console.log(res);
-
-    // router.push("/setting/personal-information");
-  };
-
-  // if (isLoading) return <Loading />;
-
-  const displayImage = (() => {
-    if (imagePreview) return imagePreview;
-
-    if (typeof profileImage === "string") {
-      if (profileImage.startsWith("/")) return profileImage;
-
-      if (process.env.NEXT_PUBLIC_IMAGE_URL) {
-        return `${process.env.NEXT_PUBLIC_IMAGE_URL}${profileImage}`;
-      }
+    if (res?.data?.success) {
+      router.push("/settings/personal-information");
     }
-
-    // Fallback image
-    return "/admin.jpeg";
-  })();
+  };
 
   return (
     <div className='flex min-h-screen bg-transparent'>
