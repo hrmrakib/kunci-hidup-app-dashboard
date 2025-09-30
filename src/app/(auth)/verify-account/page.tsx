@@ -1,5 +1,5 @@
+"use client";
 import type React from "react";
-import "use client";
 import { useState, useRef, useEffect } from "react";
 import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -7,6 +7,8 @@ import { Input } from "@/components/ui/input";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import { useVerifyForgetPasswordOtpMutation } from "@/redux/features/auth/authAPI";
+import { toast } from "sonner";
 
 export default function VerifyAccountPage() {
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
@@ -15,6 +17,8 @@ export default function VerifyAccountPage() {
   const [isResending, setIsResending] = useState(false);
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
   const router = useRouter();
+  const [verifyForgetPasswordOtpMutation] =
+    useVerifyForgetPasswordOtpMutation();
 
   useEffect(() => {
     // Focus on first input when component mounts
@@ -79,14 +83,15 @@ export default function VerifyAccountPage() {
     setError("");
 
     try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+      const res = await verifyForgetPasswordOtpMutation({
+        otp: otpCode,
+      }).unwrap();
 
-      // For demo purposes, accept any 6-digit code
-      console.log("[v0] OTP verification attempted:", otpCode);
-
-      // Redirect to success page or dashboard
-      router.push("/auth/signin?verified=true");
+      if (res?.success) {
+        localStorage.setItem("access_token", res?.data?.access_token);
+        toast.success("OTP verified successfully.");
+        router.push("/reset-password");
+      }
     } catch (error) {
       setError("Invalid verification code. Please try again.");
       console.log(error);
@@ -121,7 +126,7 @@ export default function VerifyAccountPage() {
         <div className='bg-white rounded-2xl shadow-lg p-8 relative'>
           {/* Back Button */}
           <Link
-            href='/auth/forgot-password'
+            href='/forgot-password'
             className='absolute top-6 left-6 p-2 hover:bg-gray-100 rounded-full transition-colors'
           >
             <ArrowLeft className='w-5 h-5 text-gray-600' />
@@ -159,7 +164,7 @@ export default function VerifyAccountPage() {
                   value={digit}
                   onChange={(e) => handleInputChange(index, e.target.value)}
                   onKeyDown={(e) => handleKeyDown(index, e)}
-                  className='w-12 h-12 text-center text-lg font-semibold border-2 rounded-full focus:border-orange-500 focus:ring-orange-500'
+                  className='w-12 h-12 text-black text-center text-lg font-semibold border-2 rounded-full focus:border-[#FEAA39] focus:ring-[#FEAA39]'
                   placeholder='-'
                 />
               ))}
@@ -174,7 +179,7 @@ export default function VerifyAccountPage() {
             <Button
               type='submit'
               disabled={isLoading}
-              className='w-full bg-orange-500 hover:bg-orange-600 text-white py-3 rounded-xl font-medium transition-colors'
+              className='w-full h-12 bg-[#FEAA39] hover:bg-[#df891a] text-white py-3 rounded-xl font-medium transition-colors'
             >
               {isLoading ? "Verifying..." : "Verification"}
             </Button>
@@ -188,7 +193,7 @@ export default function VerifyAccountPage() {
                 type='button'
                 onClick={handleResendCode}
                 disabled={isResending}
-                className='text-orange-500 text-sm font-medium hover:text-orange-600 transition-colors disabled:opacity-50'
+                className='text-[#FEAA39] text-sm font-medium hover:text-[#df891a] transition-colors disabled:opacity-50'
               >
                 {isResending ? "Sending..." : "Resent Now"}
               </button>

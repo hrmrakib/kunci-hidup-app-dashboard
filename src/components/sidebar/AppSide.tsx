@@ -13,29 +13,39 @@ import {
   SidebarMenuButton,
   SidebarFooter,
 } from "@/components/ui/sidebar";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+  DialogDescription,
+} from "@/components/ui/dialog";
 import { usePathname, useRouter } from "next/navigation";
 import Image from "next/image";
 import { useState } from "react";
+import { Button } from "../ui/button";
+import { logout } from "@/service/authService";
 
 export default function DashboardSidebar() {
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
 
-  console.log(pathname);
-
   const handleLogout = async () => {
-    // await logout();
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("refreshToken");
+    await logout();
     router.push("/signin");
   };
 
   if (
     pathname === "/signup" ||
     pathname === "/signin" ||
-    pathname === "/forget-password" ||
+    pathname === "/forgot-password" ||
     pathname === "/verify-password" ||
-    pathname === "/verify-otp" ||
-    pathname === "/reset-password"
+    pathname === "/verify-account" ||
+    pathname === "/reset-password" 
   ) {
     return null;
   }
@@ -178,11 +188,34 @@ export default function DashboardSidebar() {
             </button>
           </SidebarFooter>
         </Sidebar>
-        {/* <LogoutModal
-          isOpen={isLogoutModalOpen}
-          onClose={() => setIsLogoutModalOpen(false)}
-          onConfirm={handleLogout}
-        /> */}
+
+        <Dialog open={isLogoutModalOpen} onOpenChange={setIsLogoutModalOpen}>
+          <DialogContent className='sm:max-w-[400px]' showCloseButton={false}>
+            <DialogHeader>
+              <DialogTitle className='text-[#FEAA39] text-center text-lg lg:text-2xl'>
+                Logout Confirmation
+              </DialogTitle>
+              <DialogDescription className='text-center mt-4 text-base text-[#000]'>
+                Are you sure you want to log out? You will need to log in again
+                to access your account.
+              </DialogDescription>
+            </DialogHeader>
+            <DialogFooter className='flex items-center justify-center gap-8 mt-8'>
+              <Button
+                className='bg-gray-200 hover:bg-gray-300 text-black'
+                onClick={() => setIsLogoutModalOpen(false)}
+              >
+                Cancel
+              </Button>
+              <Button
+                className='bg-[#FEAA39] hover:bg-[#cf340d]'
+                onClick={handleLogout}
+              >
+                Logout
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </div>
     </>
   );

@@ -9,6 +9,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Image from "next/image";
+import { useResetPasswordMutation } from "@/redux/features/auth/authAPI";
+import { toast } from "sonner";
 
 export default function ResetPasswordPage() {
   const router = useRouter();
@@ -20,13 +22,14 @@ export default function ResetPasswordPage() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isLoading, setIsLoading] = useState(false);
+  const [resetPasswordMutation] = useResetPasswordMutation();
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
 
     if (!formData.password) {
       newErrors.password = "Password is required";
-    } else if (formData.password.length < 8 || formData.password.length > 10) {
+    } else if (formData.password.length < 5 || formData.password.length > 10) {
       newErrors.password = "Password must be 8-10 characters long";
     }
 
@@ -48,11 +51,17 @@ export default function ResetPasswordPage() {
     setIsLoading(true);
 
     try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+      const res = await resetPasswordMutation({
+        new_password: formData.password,
+        confirm_password: formData.confirmPassword,
+      }).unwrap();
 
-      // Redirect to sign in page after successful password reset
-      router.push("/auth/signin");
+      if (res?.success) {
+        toast.success("Password reset successfully.");
+        router.push("/signin");
+      }
+
+      // router.push("/signin");
     } catch (error) {
       console.error("Password reset failed:", error);
     } finally {
@@ -111,7 +120,7 @@ export default function ResetPasswordPage() {
                 placeholder='Enter new password'
                 value={formData.password}
                 onChange={(e) => handleInputChange("password", e.target.value)}
-                className={`pl-10 pr-10 h-12 bg-gray-50 border-gray-200 rounded-lg ${
+                className={`pl-10 pr-10 h-12 text-black bg-gray-50 border-gray-200 rounded-lg ${
                   errors.password ? "border-red-500" : ""
                 }`}
               />
@@ -150,7 +159,7 @@ export default function ResetPasswordPage() {
                 onChange={(e) =>
                   handleInputChange("confirmPassword", e.target.value)
                 }
-                className={`pl-10 pr-10 h-12 bg-gray-50 border-gray-200 rounded-lg ${
+                className={`pl-10 pr-10 h-12 text-black bg-gray-50 border-gray-200 rounded-lg ${
                   errors.confirmPassword ? "border-red-500" : ""
                 }`}
               />
@@ -177,7 +186,7 @@ export default function ResetPasswordPage() {
           <Button
             type='submit'
             disabled={isLoading}
-            className='w-full h-12 bg-orange-400 hover:bg-orange-500 text-white font-medium rounded-lg transition-colors'
+            className='w-full h-12 bg-[#FEAA39] hover:bg-[#eb8f17] text-white font-medium rounded-lg transition-colors'
           >
             {isLoading ? "Resetting Password..." : "Reset Password"}
           </Button>

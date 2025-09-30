@@ -10,6 +10,9 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Mail, Lock, Eye, EyeOff } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
+import { useLoginMutation } from "@/redux/features/auth/authAPI";
+import { useRouter } from "next/navigation";
+import { saveToken } from "@/service/authService";
 
 export default function SignInPage() {
   const [formData, setFormData] = useState({
@@ -19,6 +22,8 @@ export default function SignInPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
+  const [loginMutation] = useLoginMutation();
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -53,8 +58,18 @@ export default function SignInPage() {
     setIsLoading(true);
 
     try {
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-      console.log("Sign in data:", formData);
+      const res = await loginMutation({
+        email: formData.email,
+        password: formData.password,
+      });
+
+      if (res?.data?.success) {
+        localStorage.setItem("access_token", res?.data?.data?.tokens.access);
+        localStorage.setItem("access_token", res?.data?.data?.tokens.refresh);
+        await saveToken(res?.data?.data?.tokens.access);
+
+        router.push("/");
+      }
     } catch (error) {
       console.error("Sign in error:", error);
     } finally {
@@ -143,8 +158,8 @@ export default function SignInPage() {
             {/* Forgot Password Link */}
             <div className='text-right'>
               <Link
-                href='/auth/forgot-password'
-                className='text-orange-500 text-sm hover:text-orange-600 transition-colors'
+                href='/forgot-password'
+                className='text-[#FEAA39] text-sm hover:text-[#e68b15] transition-colors'
               >
                 Forgot password?
               </Link>
@@ -154,7 +169,7 @@ export default function SignInPage() {
             <Button
               type='submit'
               disabled={isLoading}
-              className='w-full bg-orange-500 hover:bg-orange-600 text-white font-medium py-3 rounded-lg transition-colors'
+              className='w-full h-12 bg-[#FEAA39] hover:bg-[#e68b15] text-white font-medium py-3 rounded-lg transition-colors'
             >
               {isLoading ? "Signing In..." : "Sign in"}
             </Button>
@@ -175,7 +190,7 @@ export default function SignInPage() {
                 Don&apos;t have an account?{" "}
                 <Link
                   href='/auth/signup'
-                  className='text-orange-500 hover:text-orange-600 font-medium transition-colors'
+                  className='text-[#FEAA39] hover:text-[#e68b15] font-medium transition-colors'
                 >
                   Sign up
                 </Link>

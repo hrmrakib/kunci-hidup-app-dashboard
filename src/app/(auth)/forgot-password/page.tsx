@@ -9,12 +9,15 @@ import { ArrowLeft, Mail } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import { useForgotPasswordMutation } from "@/redux/features/auth/authAPI";
+import { toast } from "sonner";
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState<{ email?: string }>({});
   const router = useRouter();
+  const [forgotPasswordMutation] = useForgotPasswordMutation();
 
   const validateForm = () => {
     const newErrors: { email?: string } = {};
@@ -37,14 +40,12 @@ export default function ForgotPasswordPage() {
     setIsLoading(true);
 
     try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+      const res = await forgotPasswordMutation({ email }).unwrap();
 
-      // In a real app, you would send the reset email here
-      console.log("Password reset email sent to:", email);
-
-      // Redirect to a success page or show success message
-      alert("Password reset link has been sent to your email!");
+      if (res?.success) {
+        toast.success("OTP has been sent to your email.");
+        router.push("/verify-account");
+      }
     } catch (error) {
       console.error("Error sending reset email:", error);
       setErrors({ email: "Failed to send reset email. Please try again." });

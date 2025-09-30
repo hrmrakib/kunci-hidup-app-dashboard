@@ -17,9 +17,9 @@ const Header = () => {
   if (
     pathname === "/signup" ||
     pathname === "/signin" ||
-    pathname === "/forget-password" ||
+    pathname === "/forgot-password" ||
     pathname === "/verify-password" ||
-    pathname === "/verify-otp" ||
+    pathname === "/verify-account" ||
     pathname === "/reset-password"
   ) {
     return null;
