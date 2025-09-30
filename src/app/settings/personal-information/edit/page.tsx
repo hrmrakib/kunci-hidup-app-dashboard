@@ -124,7 +124,15 @@ export default function PersonalInformationEditPage() {
                     onClick={handleImageClick}
                   >
                     <div className='w-32 h-32 rounded-full overflow-hidden relative'>
-                      {profileImage ? (
+                      {imagePreview ? (
+                        <Image
+                          src={imagePreview}
+                          alt='Profile'
+                          fill
+                          className='object-cover'
+                          sizes='128px'
+                        />
+                      ) : (
                         <Image
                           src={`${process.env.NEXT_PUBLIC_API_URL}${admin?.data?.profile_pic}`}
                           alt='Profile'
@@ -132,10 +140,6 @@ export default function PersonalInformationEditPage() {
                           className='object-cover'
                           sizes='128px'
                         />
-                      ) : (
-                        <div className='w-full h-full bg-gray-200 flex items-center justify-center'>
-                          <span className='text-gray-500'>No Image</span>
-                        </div>
                       )}
                     </div>
                     <div className='absolute bottom-0 right-0 bg-white p-1 rounded-full border border-gray-200'>
