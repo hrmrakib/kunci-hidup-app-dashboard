@@ -23,7 +23,7 @@ export default function ResetPasswordPage() {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isLoading, setIsLoading] = useState(false);
   const [resetPasswordMutation] = useResetPasswordMutation();
-
+ 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
 

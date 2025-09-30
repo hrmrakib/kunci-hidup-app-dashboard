@@ -12,6 +12,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 // import { useUpdatePasswordMutation } from "@/redux/feature/settingAPI";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { useResetPasswordMutation } from "@/redux/features/auth/authAPI";
 
 export default function ChangePasswordPage() {
   const [formData, setFormData] = useState({
@@ -24,6 +25,7 @@ export default function ChangePasswordPage() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [error, setError] = useState("");
   const router = useRouter();
+  const [resetPasswordMutation] = useResetPasswordMutation();
 
   // const [updatePassword] = useUpdatePasswordMutation();
 
@@ -47,23 +49,24 @@ export default function ChangePasswordPage() {
       return;
     }
 
-    if (formData.newPassword.length < 6) {
-      setError("Password must be at least 8 characters long");
+    if (formData.newPassword.length < 5) {
+      setError("Password must be at least 5 characters long");
       return;
     }
 
-    // const res = await updatePassword({
-    //   new_password: formData.newPassword,
-    //   confirm_password: formData.confirmPassword,
-    // });
+    const res = await resetPasswordMutation({
+      new_password: formData.newPassword,
+      confirm_password: formData.confirmPassword,
+    });
 
-    // if (res.error) {
-    //   toast.error("Something went wrong");
-    // } else if (res.data) {
-    //   toast.success("Password updated successfully!");
-    // }
+    console.log(res);
 
-    router.push("/setting");
+    if (res.error) {
+      toast.error("Something went wrong");
+    } else if (res?.data?.success) {
+      toast.success("Password updated successfully!");
+      router.push("/settings");
+    }
 
     setFormData({
       newPassword: "",
