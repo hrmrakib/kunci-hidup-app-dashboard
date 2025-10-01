@@ -4,14 +4,14 @@ import { useEffect, useRef, useState } from "react";
 import Quill from "quill";
 import "quill/dist/quill.snow.css";
 import { Button } from "@/components/ui/button";
-import {
-  useGetPrivacyPolicyQuery,
-  useSetPrivacyPolicyMutation,
-  useSetTermsAndConditionsMutation,
-} from "@/redux/feature/settingAPI";
+
 import Loading from "@/components/loading/Loading";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import {
+  useGetPrivacyPolicyQuery,
+  useSetPrivacyPolicyMutation,
+} from "@/redux/features/setting/settingAPI";
 
 const EditPrivacyPolicy = () => {
   const editorRef = useRef<HTMLDivElement>(null);
@@ -72,7 +72,8 @@ const EditPrivacyPolicy = () => {
       const res = await setPrivacyPolicy({ description: content }).unwrap();
       if (res?.description) {
         toast.success("Terms and Conditions saved successfully!");
-        router.push("/setting/privacy-policy");
+        router.push("/settings/privacy-policy");
+        refetch()
       } else {
         toast.error("Failed to save.");
       }
@@ -82,22 +83,21 @@ const EditPrivacyPolicy = () => {
   };
 
   return (
-    <div className='min-h-[75vh] w-[96%] mx-auto flex flex-col justify-between gap-6'>
-      <div className='space-y-6'>
+    <div className='w-[96%] mx-auto flex flex-col justify-between gap-6'>
+      <div className='space-y-6 pt-6'>
         <div className='h-auto'>
           <div
             ref={editorRef}
-            className='h-[50vh] bg-white text-base'
+            className='h-auto bg-white text-black text-base'
             id='quill-editor'
           />
         </div>
       </div>
-
       <div className='flex justify-end'>
         <Button
           onClick={handleSubmit}
           disabled={isSaving}
-          className='bg-primary hover:bg-teal-700'
+          className='bg-[#FEAA39] hover:bg-teal-700'
         >
           {isSaving ? "Saving..." : "Save Content"}
         </Button>

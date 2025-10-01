@@ -139,6 +139,7 @@ export default function UserListPage() {
         <div className='overflow-hidden rounded-lg bg-white shadow'>
           {/* Desktop Table */}
           <div className='hidden md:block'>
+          
             <table className='w-full'>
               <thead className='bg-table-header-bg'>
                 <tr>

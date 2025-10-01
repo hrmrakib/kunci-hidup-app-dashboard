@@ -26,7 +26,7 @@ export default function SettingsPage() {
   ];
 
   return (
-    <div className='min-h-screen bg-gray-50 p-4 md:p-6'>
+    <div className='min-h-screen bg-transparent p-4 md:p-6'>
       <div className='mx-auto max-w-4xl'>
         <h1 className='text-2xl font-semibold text-gray-900 mb-6'>Setting</h1>
 

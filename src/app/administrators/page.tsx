@@ -20,6 +20,11 @@ import { Label } from "@/components/ui/label";
 import { Edit, Trash2, X, Plus } from "lucide-react";
 import Image from "next/image";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import {
+  useGetAllStaffsQuery,
+  useGetStaffProfileQuery,
+} from "@/redux/features/administrators/administratorsAPI";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface Administrator {
   id: string;
@@ -28,6 +33,16 @@ interface Administrator {
   phone: string;
   role: "Admin" | "Super Admin";
   avatar: string;
+}
+
+export interface Staff {
+  id: number;
+  email: string;
+  full_name: string;
+  username: string;
+  role: "staff" | "admin" | string;
+  is_active: boolean;
+  created_at: string;
 }
 
 const mockAdministrators: Administrator[] = [
@@ -135,6 +150,12 @@ export default function AdministratorsPage() {
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
   const currentAdministrators = administrators.slice(startIndex, endIndex);
+  const { data: staffs, isLoading } = useGetAllStaffsQuery(undefined, {
+    refetchOnMountOrArgChange: true,
+  });
+  const { data: getStaffProfile } = useGetStaffProfileQuery(undefined, {
+    refetchOnMountOrArgChange: true,
+  });
 
   const handleAddAdmin = () => {
     setFormData({ name: "", email: "", phone: "", role: "Admin" });
@@ -143,6 +164,7 @@ export default function AdministratorsPage() {
 
   const handleEditAdmin = (admin: Administrator) => {
     setSelectedAdmin(admin);
+    
     setFormData({
       name: admin.name,
       email: admin.email,
@@ -188,7 +210,7 @@ export default function AdministratorsPage() {
 
   const confirmDeleteAdmin = () => {
     if (selectedAdmin) {
-      setAdministrators( 
+      setAdministrators(
         administrators.filter((admin) => admin.id !== selectedAdmin.id)
       );
       setIsDeleteModalOpen(false);
@@ -276,13 +298,13 @@ export default function AdministratorsPage() {
         {/* Desktop Table */}
         <div className='w-full hidden md:block bg-white rounded-lg shadow-sm overflow-hidden'>
           <div className='bg-table-header-bg text-white'>
-            <div className='grid grid-cols-7 gap-4 p-4 font-medium'>
+            <div className='grid grid-cols-6 gap-4 p-4 font-medium'>
               <div className='text-left text-sm font-medium text-table-header-color'>
                 Sl no.
               </div>
-              <div className='text-left text-sm font-medium text-table-header-color'>
+              {/* <div className='text-left text-sm font-medium text-table-header-color'>
                 Profile
-              </div>
+              </div> */}
               <div className='text-left text-sm font-medium text-table-header-color'>
                 Name
               </div>
@@ -302,40 +324,59 @@ export default function AdministratorsPage() {
           </div>
 
           <div className='divide-y divide-gray-200'>
-            {currentAdministrators.map((admin) => (
+            {isLoading
+              ? Array.from({ length: 10 }).map((_, index) => (
+                  <div
+                    key={index}
+                    className='grid grid-cols-6 gap-4 p-4 items-center'
+                  >
+                    <Skeleton className='h-4 w-[250px]' />
+                    <Skeleton className='h-4 w-[250px]' />
+                    <Skeleton className='h-4 w-[250px]' />
+                    <Skeleton className='h-4 w-[250px]' />
+                    <Skeleton className='h-4 w-[250px]' />
+                    <Skeleton className='h-4 w-[250px]' />
+                  </div>
+                ))
+              : null}
+
+            {staffs?.data?.map((admin: Staff) => (
               <div
-                key={admin.id}
-                className='grid grid-cols-7 gap-4 p-4 items-center hover:bg-gray-50'
+                key={admin?.id}
+                className='grid grid-cols-6 gap-4 p-4 items-center hover:bg-gray-50'
               >
                 <div className='text-sm text-gray-600'>{admin.id}</div>
-                <div className='flex items-center gap-3 w-10 h-10'>
+
+                {/* <div className='flex items-center gap-3 w-10 h-10'>
                   <Avatar className='h-10 w-10'>
                     <AvatarImage
-                      src={admin.avatar || "/user.jpg"}
-                      alt={admin.name}
+                      src={`${process.env.NEXT_PUBLIC_ASSET_URL}${admin?.}`}
+                      alt={admin?.full_name}
                       width={40}
                       height={40}
                     />
                     <AvatarFallback>
-                      {admin.name
+                      {admin.full_name
                         .split(" ")
                         .map((n) => n[0])
                         .join("")}
                     </AvatarFallback>
                   </Avatar>
+                </div> */}
+                <div className='font-medium text-gray-900'>
+                  {admin?.full_name}
                 </div>
-                <div className='font-medium text-gray-900'>{admin.name}</div>
-                <div className='text-gray-600'>{admin.email}</div>
-                <div className='text-gray-600'>{admin.phone}</div>
+                <div className='text-gray-600'>{admin?.email}</div>
+                <div className='text-gray-600'>{admin?.contact}</div>
                 <div>
                   <span
                     className={`px-2 py-1 rounded text-sm font-medium ${
-                      admin.role === "Super Admin"
+                      admin?.role === "Super Admin"
                         ? "text-blue-600 bg-blue-50"
                         : "text-green-600 bg-green-50"
                     }`}
                   >
-                    {admin.role}
+                    {admin?.role}
                   </span>
                 </div>
                 <div className='flex items-center gap-2'>

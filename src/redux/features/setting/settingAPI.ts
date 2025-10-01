@@ -23,14 +23,19 @@ const settingAPI = baseAPI.injectEndpoints({
       }),
     }),
 
-    getTermsConditions: builder.query({
-      query: () => `api/dicipline/terms-conditions/`,
-    }),
     getPrivacyPolicy: builder.query({
-      query: () => `api/dicipline/terms-conditions/`,
+      query: () => `v1/privacy-policy/privacy-policy/`,
     }),
-    getTrustSafety: builder.query({
-      query: () => `api/dicipline/terms-conditions/`,
+
+    setPrivacyPolicy: builder.mutation({
+      query: (body) => ({
+        url: "v1/privacy-policy/privacy-policy/",
+        method: "PUT",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+        },
+        body,
+      }),
     }),
   }),
 });
@@ -38,8 +43,7 @@ const settingAPI = baseAPI.injectEndpoints({
 export const {
   useGetAdminProfileQuery,
   useUpdateAdminProfileMutation,
-  useGetTermsConditionsQuery,
   useGetPrivacyPolicyQuery,
-  useGetTrustSafetyQuery,
+  useSetPrivacyPolicyMutation,
 } = settingAPI;
 export default settingAPI;

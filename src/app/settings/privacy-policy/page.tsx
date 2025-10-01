@@ -2,13 +2,13 @@
 
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
-// import { useGetPrivacyPolicyQuery } from "@/redux/feature/settingAPI";
+import { useGetPrivacyPolicyQuery } from "@/redux/features/setting/settingAPI";
 
 export default function PrivacyPolicyPage() {
-  // const { data: privacyPolicy, isLoading } = useGetPrivacyPolicyQuery({});
+  const { data: privacyPolicy } = useGetPrivacyPolicyQuery({});
 
   return (
-    <div className='flex min-h-screen bg-gray-50'>
+    <div className='flex min-h-screen bg-transparent'>
       <div className='flex-1 w-full'>
         <main className='w-full p-4 md:p-6'>
           <div className='max-w-3xl mx-auto'>
@@ -22,7 +22,7 @@ export default function PrivacyPolicyPage() {
               </Link>
 
               <Link
-                href='/setting/privacy-policy/edit'
+                href='/settings/privacy-policy/edit'
                 className='inline-flex items-center text-primary hover:text-teal-700 border border-[#760C2A] rounded-md px-4 py-1.5'
               >
                 <span className='text-xl font-semibold'>Edit</span>
@@ -30,14 +30,13 @@ export default function PrivacyPolicyPage() {
             </div>
 
             <div className='prose prose-sm max-w-none'>
-              <h2 className='text-xl font-semibold mb-4'>
+              <h2 className='text-xl font-semibold text-black mb-4'>
                 Privacy Policy Content
               </h2>
             </div>
 
-            <div>
-              Lorem ipsum dolor sit amet consectetur, adipisicing elit. Exercitationem porro incidunt impedit minus dolorem rerum. Inventore eaque accusamus, cum doloribus laudantium ipsam quam tenetur dolore corporis, adipisci aliquid accusantium voluptates.
-              {/* {privacyPolicy?.description ? (
+            <div className='text-black'>
+              {privacyPolicy?.description ? (
                 <div
                   className='prose prose-sm max-w-none'
                   dangerouslySetInnerHTML={{
@@ -46,7 +45,7 @@ export default function PrivacyPolicyPage() {
                 />
               ) : (
                 <p>Loading content...</p>
-              )} */}
+              )}
             </div>
           </div>
         </main>
