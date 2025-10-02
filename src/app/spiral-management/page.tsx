@@ -8,110 +8,46 @@ import { Badge } from "@/components/ui/badge";
 import { Search, Plus, Edit, Trash2, X } from "lucide-react";
 import Link from "next/link";
 import { Dialog, DialogContent, DialogHeader } from "@/components/ui/dialog";
+import { useGetAllSprialsQuery } from "@/redux/features/sprial-management/sprialManagementAPI";
 
-interface Spiral {
-  id: string;
-  title: string;
-  description: string;
-  duration: string;
-  focus: string[];
+export interface Day {
+  id: number;
+  day_number: number;
+  journal_prompt: string;
+  voice_title: string;
+  voice_drop: string | null;
+  is_active: boolean;
+  is_completed: boolean;
+  created_at: string;
+  updated_at: string;
 }
 
-const mockSpirals: Spiral[] = [
-  {
-    id: "1",
-    title: "Feminine Healing Spiral",
-    description:
-      '"For the part of you that longs to feel soft, intuitive, and safe again. This spiral reconnects you to your sacred feminine wisdom."',
-    duration: "1-7 Days",
-    focus: ["Self-worth", "fear of receiving", "overflow"],
-  },
-  {
-    id: "2",
-    title: "Feminine Healing Spiral",
-    description:
-      '"For the part of you that longs to feel soft, intuitive, and safe again. This spiral reconnects you to your sacred feminine wisdom."',
-    duration: "1-7 Days",
-    focus: ["Self-worth", "fear of receiving", "overflow"],
-  },
-  {
-    id: "3",
-    title: "Feminine Healing Spiral",
-    description:
-      '"For the part of you that longs to feel soft, intuitive, and safe again. This spiral reconnects you to your sacred feminine wisdom."',
-    duration: "1-7 Days",
-    focus: ["Self-worth", "fear of receiving", "overflow"],
-  },
-  {
-    id: "4",
-    title: "Feminine Healing Spiral",
-    description:
-      '"For the part of you that longs to feel soft, intuitive, and safe again. This spiral reconnects you to your sacred feminine wisdom."',
-    duration: "1-7 Days",
-    focus: ["Self-worth", "fear of receiving", "overflow"],
-  },
-  {
-    id: "5",
-    title: "Feminine Healing Spiral",
-    description:
-      '"For the part of you that longs to feel soft, intuitive, and safe again. This spiral reconnects you to your sacred feminine wisdom."',
-    duration: "1-7 Days",
-    focus: ["Self-worth", "fear of receiving", "overflow"],
-  },
-  {
-    id: "6",
-    title: "Feminine Healing Spiral",
-    description:
-      '"For the part of you that longs to feel soft, intuitive, and safe again. This spiral reconnects you to your sacred feminine wisdom."',
-    duration: "1-7 Days",
-    focus: ["Self-worth", "fear of receiving", "overflow"],
-  },
-  {
-    id: "7",
-    title: "Feminine Healing Spiral",
-    description:
-      '"For the part of you that longs to feel soft, intuitive, and safe again. This spiral reconnects you to your sacred feminine wisdom."',
-    duration: "1-7 Days",
-    focus: ["Self-worth", "fear of receiving", "overflow"],
-  },
-  {
-    id: "8",
-    title: "Feminine Healing Spiral",
-    description:
-      '"For the part of you that longs to feel soft, intuitive, and safe again. This spiral reconnects you to your sacred feminine wisdom."',
-    duration: "1-7 Days",
-    focus: ["Self-worth", "fear of receiving", "overflow"],
-  },
-  {
-    id: "9",
-    title: "Feminine Healing Spiral",
-    description:
-      '"For the part of you that longs to feel soft, intuitive, and safe again. This spiral reconnects you to your sacred feminine wisdom."',
-    duration: "1-7 Days",
-    focus: ["Self-worth", "fear of receiving", "overflow"],
-  },
-];
+export interface Journal {
+  id: number;
+  title: string;
+  description: string;
+  focus_point: string;
+  duration: number;
+  days: Day[];
+  created_at: string;
+  updated_at: string;
+}
 
 export default function JournalPromptsPage() {
   const [searchTerm, setSearchTerm] = useState("");
-  const [spirals, setSpirals] = useState<Spiral[]>(mockSpirals);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isDeleteConfirm, setIsDeleteConfirm] = useState(false);
   const [deleteItemId, setDeleteItemId] = useState<string | null>(null);
+  const { data: spirals } = useGetAllSprialsQuery(undefined, {
+    refetchOnMountOrArgChange: true,
+  });
 
-  const filteredSpirals = spirals.filter(
-    (spiral) =>
-      spiral.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      spiral.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      spiral.focus.some((f) =>
-        f.toLowerCase().includes(searchTerm.toLowerCase())
-      )
-  );
+  console.log(spirals?.results);
 
   const handleDelete = (id: string) => {
-    if (isDeleteConfirm) {
-      setSpirals(spirals.filter((spiral) => spiral.id !== id));
-    }
+    // if (isDeleteConfirm) {
+    //   setSpirals(spirals.filter((spiral) => spiral.id !== id));
+    // }
   };
 
   return (
@@ -145,19 +81,19 @@ export default function JournalPromptsPage() {
 
         {/* Spirals Grid */}
         <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
-          {filteredSpirals.map((spiral) => (
+          {spirals?.results?.map((spiral: Journal) => (
             <Card
-              key={spiral.id}
+              key={spiral?.id}
               className='bg-[#FFF7EB] border-2 border-orange-200 hover:border-orange-300 transition-colors'
             >
               <CardHeader>
                 <CardTitle className='text-xl text-[#FEAA39] text-center'>
-                  {spiral.title}
+                  {spiral?.title}
                 </CardTitle>
               </CardHeader>
               <CardContent className='space-y-4'>
                 <p className='text-[#404040] text-center leading-relaxed'>
-                  {spiral.description}
+                  {spiral?.description}
                 </p>
 
                 <div className='flex items-center justify-center gap-2'>
@@ -165,7 +101,7 @@ export default function JournalPromptsPage() {
                     variant='secondary'
                     className='bg-orange-100 text-orange-800'
                   >
-                    📅 Duration: {spiral.duration}
+                    📅 Duration: {spiral?.duration}
                   </Badge>
                 </div>
 
@@ -173,7 +109,7 @@ export default function JournalPromptsPage() {
                   <p className='text-sm font-medium text-orange-600 mb-2'>
                     Focus:{" "}
                     <span className='text-orange-500'>
-                      {spiral.focus.join(", ")}
+                      {spiral?.focus_point}
                     </span>
                   </p>
                 </div>
@@ -205,7 +141,7 @@ export default function JournalPromptsPage() {
           ))}
         </div>
 
-        {filteredSpirals.length === 0 && (
+        {spirals?.results?.length === 0 && (
           <div className='text-center py-12'>
             <p className='text-gray-500 text-lg'>
               No spirals found matching your search.

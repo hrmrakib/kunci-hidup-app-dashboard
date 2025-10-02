@@ -1,4 +1,5 @@
 import baseAPI from "@/redux/api/baseAPI";
+import { get } from "http";
 
 const sprialManagementAPI = baseAPI.injectEndpoints({
   endpoints: (builder) => ({
@@ -11,8 +12,18 @@ const sprialManagementAPI = baseAPI.injectEndpoints({
         },
       }),
     }),
+
+    getSprial: builder.query({
+      query: (id) => ({
+        url: `v1/spiral-journey/spirals/${id}/`,
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+        },
+      }),
+    }),
   }),
 });
 
-export const { useGetAllSprialsQuery } = sprialManagementAPI;
+export const { useGetAllSprialsQuery, useGetSprialQuery } = sprialManagementAPI;
 export default sprialManagementAPI;

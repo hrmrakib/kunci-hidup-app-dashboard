@@ -9,6 +9,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { ArrowLeft, Upload } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useGetSprialQuery } from "@/redux/features/sprial-management/sprialManagementAPI";
 
 interface DayData {
   id: number;
@@ -38,6 +39,9 @@ export default function EditSpiralPage({ params }: { params: { id: string } }) {
       voiceFile: null,
     }))
   );
+  const {data} = useGetSprialQuery(params.id);
+
+console.log(data)
 
   const handleDayToggle = (dayId: number) => {
     setDays(

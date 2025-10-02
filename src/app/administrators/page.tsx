@@ -17,21 +17,24 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
-import { Edit, Trash2, X, Plus } from "lucide-react";
+import { Edit, Trash2, X, Plus, Eye, EyeOff } from "lucide-react";
 import Image from "next/image";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
+  useCreateAdminMutation,
+  useDeleteAdminMutation,
   useGetAllStaffsQuery,
   useGetStaffProfileQuery,
+  useUpdateRoleMutation,
 } from "@/redux/features/administrators/administratorsAPI";
 import { Skeleton } from "@/components/ui/skeleton";
+import { toast } from "sonner";
 
 interface Administrator {
   id: string;
   name: string;
   email: string;
   phone: string;
-  role: "Admin" | "Super Admin";
+  role: "Admin" | "Super Admin" | string;
   avatar: string;
 }
 
@@ -40,7 +43,8 @@ export interface Staff {
   email: string;
   full_name: string;
   username: string;
-  role: "staff" | "admin" | string;
+  password: string;
+  role: "staff" | "superadmin";
   is_active: boolean;
   created_at: string;
 }
@@ -138,11 +142,14 @@ export default function AdministratorsPage() {
   const [selectedAdmin, setSelectedAdmin] = useState<Administrator | null>(
     null
   );
+  const [currentID, setCurrentID] = useState<string | number | null>(null);
+  const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
+    username: "",
     email: "",
-    phone: "",
-    role: "Admin" as "Admin" | "Super Admin",
+    password: "",
+    role: "superadmin",
   });
 
   const itemsPerPage = 10;
@@ -150,72 +157,104 @@ export default function AdministratorsPage() {
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
   const currentAdministrators = administrators.slice(startIndex, endIndex);
-  const { data: staffs, isLoading } = useGetAllStaffsQuery(undefined, {
+  const {
+    data: staffs,
+    isLoading,
+    refetch,
+  } = useGetAllStaffsQuery(undefined, {
     refetchOnMountOrArgChange: true,
   });
   const { data: getStaffProfile } = useGetStaffProfileQuery(undefined, {
     refetchOnMountOrArgChange: true,
   });
+  const [createAdminMutation] = useCreateAdminMutation();
+  const [deleteAdminMutation] = useDeleteAdminMutation();
+  const [updateRoleMutation] = useUpdateRoleMutation();
 
   const handleAddAdmin = () => {
-    setFormData({ name: "", email: "", phone: "", role: "Admin" });
+    setFormData({
+      name: "",
+      username: "",
+      email: "",
+      password: "",
+      role: "admin",
+    });
     setIsAddModalOpen(true);
   };
 
-  const handleEditAdmin = (admin: Administrator) => {
-    setSelectedAdmin(admin);
-    
+  const handleEditAdmin = async (admin: Staff) => {
     setFormData({
-      name: admin.name,
+      name: admin.full_name,
+      username: admin.username,
       email: admin.email,
-      phone: admin.phone,
+      password: admin.password,
       role: admin.role,
     });
+    setCurrentID(admin.id);
     setIsEditModalOpen(true);
   };
 
-  const handleDeleteAdmin = (admin: Administrator) => {
-    setSelectedAdmin(admin);
+  const handleDeleteAdmin = async (admin: string | number) => {
+    setCurrentID(admin);
     setIsDeleteModalOpen(true);
   };
 
-  const handleCreateAdmin = () => {
-    if (formData.name && formData.email && formData.phone) {
-      const newAdmin: Administrator = {
-        id: `#BI${String(administrators.length + 1).padStart(5, "0")}`,
-        name: formData.name,
+  const handleCreateAdmin = async () => {
+    if (formData.name && formData.email && formData.password) {
+      const newAdmin = {
         email: formData.email,
-        phone: formData.phone,
+        full_name: formData.name,
+        username: formData.username,
+        password: formData.password,
         role: formData.role,
-        avatar: "/user.jpg",
       };
-      setAdministrators([...administrators, newAdmin]);
-      setIsAddModalOpen(false);
-      setFormData({ name: "", email: "", phone: "", role: "Admin" });
+
+      console.log(newAdmin);
+
+      // return;
+      const res = await createAdminMutation(newAdmin);
+      console.log(res);
+
+      if (res?.data?.success) {
+        toast.success("New role created successfully!");
+        setIsAddModalOpen(false);
+        refetch();
+        setFormData({
+          name: "",
+          username: "",
+          email: "",
+          password: "",
+          role: "admin",
+        });
+      }
     }
   };
 
-  const handleUpdateAdmin = () => {
-    if (selectedAdmin && formData.name && formData.email && formData.phone) {
-      setAdministrators(
-        administrators.map((admin) =>
-          admin.id === selectedAdmin.id ? { ...admin, ...formData } : admin
-        )
-      );
+  const handleUpdateAdmin = async () => {
+    const data = {
+      full_name: formData.name,
+      email: formData.email,
+      role: formData.role,
+    };
+
+    const res = await updateRoleMutation({ id: currentID, data });
+
+    if (res?.data?.success) {
+      toast.success("Role updated successfully!");
       setIsEditModalOpen(false);
-      setSelectedAdmin(null);
-      setFormData({ name: "", email: "", phone: "", role: "Admin" });
+      refetch();
     }
   };
 
-  const confirmDeleteAdmin = () => {
-    if (selectedAdmin) {
-      setAdministrators(
-        administrators.filter((admin) => admin.id !== selectedAdmin.id)
-      );
+  const confirmDeleteAdmin = async () => {
+    const res = await deleteAdminMutation(currentID);
+    if (res?.data?.success) {
+      toast.success("Role deleted successfully!");
       setIsDeleteModalOpen(false);
-      setSelectedAdmin(null);
+      refetch();
     }
+    setIsDeleteModalOpen(false);
+    setCurrentID(null);
   };
 
   const renderPagination = () => {
@@ -298,26 +337,22 @@ export default function AdministratorsPage() {
         {/* Desktop Table */}
         <div className='w-full hidden md:block bg-white rounded-lg shadow-sm overflow-hidden'>
           <div className='bg-table-header-bg text-white'>
-            <div className='grid grid-cols-6 gap-4 p-4 font-medium'>
-              <div className='text-left text-sm font-medium text-table-header-color'>
+            <div className='grid grid-cols-5 gap-4 p-4 font-medium'>
+              <div className='text-center text-sm font-medium text-table-header-color'>
                 Sl no.
               </div>
-              {/* <div className='text-left text-sm font-medium text-table-header-color'>
-                Profile
-              </div> */}
-              <div className='text-left text-sm font-medium text-table-header-color'>
+
+              <div className='text-center text-sm font-medium text-table-header-color'>
                 Name
               </div>
-              <div className='text-left text-sm font-medium text-table-header-color'>
+              <div className='text-center text-sm font-medium text-table-header-color'>
                 Email
               </div>
-              <div className='text-left text-sm font-medium text-table-header-color'>
-                Contact Number
-              </div>
-              <div className='text-left text-sm font-medium text-table-header-color'>
+
+              <div className='text-center text-sm font-medium text-table-header-color'>
                 Has to Access
               </div>
-              <div className='text-left text-sm font-medium text-table-header-color'>
+              <div className='text-center text-sm font-medium text-table-header-color'>
                 Action
               </div>
             </div>
@@ -336,6 +371,9 @@ export default function AdministratorsPage() {
                     <Skeleton className='h-4 w-[250px]' />
                     <Skeleton className='h-4 w-[250px]' />
                     <Skeleton className='h-4 w-[250px]' />
+                    <Skeleton className='h-4 w-[250px]' />
+                    <Skeleton className='h-4 w-[250px]' />
+                    <Skeleton className='h-4 w-[250px]' />
                   </div>
                 ))
               : null}
@@ -343,32 +381,17 @@ export default function AdministratorsPage() {
             {staffs?.data?.map((admin: Staff) => (
               <div
                 key={admin?.id}
-                className='grid grid-cols-6 gap-4 p-4 items-center hover:bg-gray-50'
+                className='grid grid-cols-5 gap-4 p-4 items-center hover:bg-gray-50'
               >
-                <div className='text-sm text-gray-600'>{admin.id}</div>
+                <div className='text-lg text-center  text-gray-600'>
+                  {admin.id}
+                </div>
 
-                {/* <div className='flex items-center gap-3 w-10 h-10'>
-                  <Avatar className='h-10 w-10'>
-                    <AvatarImage
-                      src={`${process.env.NEXT_PUBLIC_ASSET_URL}${admin?.}`}
-                      alt={admin?.full_name}
-                      width={40}
-                      height={40}
-                    />
-                    <AvatarFallback>
-                      {admin.full_name
-                        .split(" ")
-                        .map((n) => n[0])
-                        .join("")}
-                    </AvatarFallback>
-                  </Avatar>
-                </div> */}
-                <div className='font-medium text-gray-900'>
+                <div className='font-medium text-center text-gray-900'>
                   {admin?.full_name}
                 </div>
-                <div className='text-gray-600'>{admin?.email}</div>
-                <div className='text-gray-600'>{admin?.contact}</div>
-                <div>
+                <div className='text-gray-600 text-center'>{admin?.email}</div>
+                <div className='text-center'>
                   <span
                     className={`px-2 py-1 rounded text-sm font-medium ${
                       admin?.role === "Super Admin"
@@ -379,7 +402,7 @@ export default function AdministratorsPage() {
                     {admin?.role}
                   </span>
                 </div>
-                <div className='flex items-center gap-2'>
+                <div className='flex items-center justify-center gap-2'>
                   <Button
                     variant='ghost'
                     size='sm'
@@ -391,7 +414,7 @@ export default function AdministratorsPage() {
                   <Button
                     variant='ghost'
                     size='sm'
-                    onClick={() => handleDeleteAdmin(admin)}
+                    onClick={() => handleDeleteAdmin(admin?.id)}
                     className='text-gray-600 hover:text-red-600'
                   >
                     <Trash2 className='w-4 h-4' />
@@ -502,8 +525,26 @@ export default function AdministratorsPage() {
                   onChange={(e) =>
                     setFormData({ ...formData, name: e.target.value })
                   }
-                  className='bg-gray-100'
+                  className='bg-gray-100 text-[#000000]'
                   placeholder='Enter name'
+                />
+              </div>
+
+              <div className='space-y-2'>
+                <Label
+                  htmlFor='user-name'
+                  className='text-xl font-semibold text-[#000000]'
+                >
+                  Username:
+                </Label>
+                <Input
+                  id='user-name'
+                  value={formData.username}
+                  onChange={(e) =>
+                    setFormData({ ...formData, username: e.target.value })
+                  }
+                  className='bg-gray-100 text-[#000000]'
+                  placeholder='Enter username'
                 />
               </div>
 
@@ -521,27 +562,38 @@ export default function AdministratorsPage() {
                   onChange={(e) =>
                     setFormData({ ...formData, email: e.target.value })
                   }
-                  className='bg-gray-100'
+                  className='bg-gray-100 text-[#000000]'
                   placeholder='Enter email'
                 />
               </div>
 
-              <div className='space-y-2'>
+              <div className='relative space-y-2'>
                 <Label
                   htmlFor='add-phone'
                   className='text-xl font-semibold text-[#000000]'
                 >
-                  Phone Number:
+                  Password:
                 </Label>
                 <Input
                   id='add-phone'
-                  value={formData.phone}
+                  type={showPassword ? "text" : "password"}
+                  value={formData.password}
                   onChange={(e) =>
-                    setFormData({ ...formData, phone: e.target.value })
+                    setFormData({ ...formData, password: e.target.value })
                   }
-                  className='bg-gray-100'
+                  className='bg-gray-100 text-[#000000]'
                   placeholder='Enter phone number'
                 />
+                <div
+                  className='absolute right-2 top-[75%] transform -translate-y-1/2'
+                  onClick={() => setShowPassword(!showPassword)}
+                >
+                  {showPassword ? (
+                    <EyeOff className='w-4 h-4 text-black' />
+                  ) : (
+                    <Eye className='w-4 h-4 text-black' />
+                  )}
+                </div>
               </div>
 
               <div className='space-y-2 flex items-center justify-between'>
@@ -552,8 +604,9 @@ export default function AdministratorsPage() {
                   Role:
                 </Label>
                 <Select
-                  value={formData.role}
-                  onValueChange={(value: "Admin" | "Super Admin") =>
+                  // value={formData.role}
+                  defaultValue='staff'
+                  onValueChange={(value: "staff" | "superadmin") =>
                     setFormData({ ...formData, role: value })
                   }
                 >
@@ -561,10 +614,10 @@ export default function AdministratorsPage() {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value='Admin' className='text-black'>
-                      Admin
+                    <SelectItem value='staff' className='text-black'>
+                      Staff
                     </SelectItem>
-                    <SelectItem value='Super Admin' className='text-black'>
+                    <SelectItem value='superadmin' className='text-black'>
                       Super Admin
                     </SelectItem>
                   </SelectContent>
@@ -644,34 +697,16 @@ export default function AdministratorsPage() {
                 />
               </div>
 
-              <div className='space-y-2'>
-                <Label
-                  htmlFor='edit-phone'
-                  className='text-xl font-semibold text-[#000000]'
-                >
-                  Phone Number:
-                </Label>
-                <Input
-                  id='edit-phone'
-                  value={formData.phone}
-                  onChange={(e) =>
-                    setFormData({ ...formData, phone: e.target.value })
-                  }
-                  className='bg-gray-100 text-lg text-black'
-                  placeholder='Enter phone number'
-                />
-              </div>
-
               <div className='space-y-2 flex items-center justify-between'>
                 <Label
-                  htmlFor='edit-role'
+                  htmlFor='add-role'
                   className='text-xl font-semibold text-[#000000]'
                 >
                   Role:
                 </Label>
                 <Select
-                  value={formData.role}
-                  onValueChange={(value: "Admin" | "Super Admin") =>
+                  defaultValue={formData.role}
+                  onValueChange={(value: "staff" | "superadmin") =>
                     setFormData({ ...formData, role: value })
                   }
                 >
@@ -679,8 +714,12 @@ export default function AdministratorsPage() {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value='Admin'>Admin</SelectItem>
-                    <SelectItem value='Super Admin'>Super Admin</SelectItem>
+                    <SelectItem value='staff' className='text-black'>
+                      Staff
+                    </SelectItem>
+                    <SelectItem value='superadmin' className='text-black'>
+                      Super Admin
+                    </SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -731,6 +770,7 @@ export default function AdministratorsPage() {
                 >
                   Cancel
                 </Button>
+
                 <Button
                   onClick={confirmDeleteAdmin}
                   className='flex-1 bg-[#FF0000] hover:bg-red-600 cursor-pointer text-white flex items-center justify-center gap-2'
