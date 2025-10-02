@@ -16,5 +16,15 @@ export async function middleware(request: Request) {
 
 // Define which paths the middleware applies to
 export const config = {
-  matcher: ["/", "/dashboard"],
+  matcher: [
+    "/",
+    "/dashboard",
+    "/user-management",
+    "/administrators",
+    "/subscribers",
+    "/spiral-management",
+    "/journal-pro-manager",
+    "/voice-drop-library",
+    "/settings",
+  ],
 };

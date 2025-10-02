@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 
 import { useState } from "react";
@@ -18,16 +19,15 @@ import {
 } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 import { Edit, Trash2, X, Plus, Eye, EyeOff } from "lucide-react";
-import Image from "next/image";
 import {
   useCreateAdminMutation,
   useDeleteAdminMutation,
   useGetAllStaffsQuery,
-  useGetStaffProfileQuery,
   useUpdateRoleMutation,
 } from "@/redux/features/administrators/administratorsAPI";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
+import { FetchBaseQueryError } from "@reduxjs/toolkit/query";
 
 interface Administrator {
   id: string;
@@ -139,9 +139,6 @@ export default function AdministratorsPage() {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const [selectedAdmin, setSelectedAdmin] = useState<Administrator | null>(
-    null
-  );
   const [currentID, setCurrentID] = useState<string | number | null>(null);
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
@@ -149,7 +146,7 @@ export default function AdministratorsPage() {
     username: "",
     email: "",
     password: "",
-    role: "superadmin",
+    role: "staff",
   });
 
   const itemsPerPage = 10;
@@ -164,9 +161,7 @@ export default function AdministratorsPage() {
   } = useGetAllStaffsQuery(undefined, {
     refetchOnMountOrArgChange: true,
   });
-  const { data: getStaffProfile } = useGetStaffProfileQuery(undefined, {
-    refetchOnMountOrArgChange: true,
-  });
+
   const [createAdminMutation] = useCreateAdminMutation();
   const [deleteAdminMutation] = useDeleteAdminMutation();
   const [updateRoleMutation] = useUpdateRoleMutation();
@@ -177,7 +172,7 @@ export default function AdministratorsPage() {
       username: "",
       email: "",
       password: "",
-      role: "admin",
+      role: "staff",
     });
     setIsAddModalOpen(true);
   };
@@ -209,23 +204,29 @@ export default function AdministratorsPage() {
         role: formData.role,
       };
 
-      console.log(newAdmin);
+      try {
+        // unwrap makes it throw on error instead of giving you res.error
+        const res = await createAdminMutation(newAdmin).unwrap();
 
-      // return;
-      const res = await createAdminMutation(newAdmin);
-      console.log(res);
+        if (res.success) {
+          toast.success("New role created successfully!");
+          setIsAddModalOpen(false);
+          refetch();
+          setFormData({
+            name: "",
+            username: "",
+            email: "",
+            password: "",
+            role: "staff",
+          });
+        }
+      } catch (err) {
+        const fetchError = err as FetchBaseQueryError & {
+          data?: { message?: string };
+        };
 
-      if (res?.data?.success) {
-        toast.success("New role created successfully!");
-        setIsAddModalOpen(false);
-        refetch();
-        setFormData({
-          name: "",
-          username: "",
-          email: "",
-          password: "",
-          role: "admin",
-        });
+        console.error(fetchError.data?.message || "Something went wrong");
+        toast.error(fetchError.data?.message || "Failed to create role");
       }
     }
   };
@@ -318,7 +319,7 @@ export default function AdministratorsPage() {
   };
 
   return (
-    <div className='bg-gray-50 min-h-screen pt-5'>
+    <div className='lg:bg-gray-50 min-h-screen pt-5'>
       <div className='w-full'>
         {/* Header */}
         <div className='flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 px-6'>
@@ -394,7 +395,7 @@ export default function AdministratorsPage() {
                 <div className='text-center'>
                   <span
                     className={`px-2 py-1 rounded text-sm font-medium ${
-                      admin?.role === "Super Admin"
+                      admin?.role === "superadmin"
                         ? "text-blue-600 bg-blue-50"
                         : "text-green-600 bg-green-50"
                     }`}
@@ -427,22 +428,14 @@ export default function AdministratorsPage() {
 
         {/* Mobile Cards */}
         <div className='md:hidden space-y-4'>
-          {currentAdministrators.map((admin) => (
+          {staffs?.data?.map((admin: Staff) => (
             <div key={admin.id} className='bg-white rounded-lg shadow-sm p-4'>
               <div className='flex items-center justify-between mb-3'>
                 <div className='flex items-center gap-3'>
-                  <Image
-                    src={admin.avatar || "/placeholder.svg"}
-                    alt={admin.name}
-                    width={40}
-                    height={40}
-                    className='rounded-full'
-                  />
                   <div>
                     <div className='font-medium text-gray-900'>
-                      {admin.name}
+                      {admin?.full_name}
                     </div>
-                    <div className='text-sm text-gray-500'>{admin.id}</div>
                   </div>
                 </div>
                 <div className='flex items-center gap-2'>
@@ -457,7 +450,7 @@ export default function AdministratorsPage() {
                   <Button
                     variant='ghost'
                     size='sm'
-                    onClick={() => handleDeleteAdmin(admin)}
+                    onClick={() => handleDeleteAdmin(admin?.id)}
                     className='text-gray-600'
                   >
                     <Trash2 className='w-4 h-4' />
@@ -470,15 +463,12 @@ export default function AdministratorsPage() {
                   <span className='text-gray-500'>Email:</span>
                   <span className='text-gray-900'>{admin.email}</span>
                 </div>
-                <div className='flex justify-between'>
-                  <span className='text-gray-500'>Phone:</span>
-                  <span className='text-gray-900'>{admin.phone}</span>
-                </div>
+
                 <div className='flex justify-between'>
                   <span className='text-gray-500'>Role:</span>
                   <span
                     className={`px-2 py-1 rounded text-xs font-medium ${
-                      admin.role === "Super Admin"
+                      admin.role === "superadmin"
                         ? "text-blue-600 bg-blue-50"
                         : "text-green-600 bg-green-50"
                     }`}

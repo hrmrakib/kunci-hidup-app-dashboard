@@ -22,8 +22,23 @@ const sprialManagementAPI = baseAPI.injectEndpoints({
         },
       }),
     }),
+
+    createSprial: builder.mutation({
+      query: (data) => ({
+        url: "v1/spiral-journey/spirals/",
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+        },
+        body: data,
+      }),
+    }),
   }),
 });
 
-export const { useGetAllSprialsQuery, useGetSprialQuery } = sprialManagementAPI;
+export const {
+  useGetAllSprialsQuery,
+  useGetSprialQuery,
+  useCreateSprialMutation,
+} = sprialManagementAPI;
 export default sprialManagementAPI;

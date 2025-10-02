@@ -13,16 +13,6 @@ const AdministratorsAPI = baseAPI.injectEndpoints({
       providesTags: ["Staffs"],
     }),
 
-    getStaffProfile: builder.query({
-      query: () => ({
-        url: "v1/account/profile/update/",
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-        },
-      }),
-    }),
-
     createAdmin: builder.mutation({
       query: (data) => ({
         url: "v1/administration/create-admin/",
@@ -59,7 +49,6 @@ const AdministratorsAPI = baseAPI.injectEndpoints({
 
 export const {
   useGetAllStaffsQuery,
-  useGetStaffProfileQuery,
   useCreateAdminMutation,
   useUpdateRoleMutation,
   useDeleteAdminMutation,

@@ -12,6 +12,7 @@ const Header = () => {
     role: "Super admin",
     image: "/admin.jpeg",
   });
+
   const pathname = usePathname();
 
   if (
@@ -29,10 +30,12 @@ const Header = () => {
       <div className='max-w-8xl mx-auto px-6'>
         <div className='flex items-center justify-between py-6'>
           <div>
-            <h1 className='text-2xl font-bold text-gray-900'>
+            <h1 className='md:text-2xl font-bold text-gray-900'>
               Welcome, {admin?.name}
             </h1>
-            <p className='text-gray-600 mt-1'>Have a nice day</p>
+            <p className='text-sm md:text-base text-gray-600 mt-1'>
+              Have a nice day
+            </p>
           </div>
           <div className='flex items-center gap-4'>
             <Button variant='ghost' size='icon' className='relative'>

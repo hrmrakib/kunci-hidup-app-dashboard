@@ -52,9 +52,9 @@ export default function DashboardSidebar() {
 
   return (
     <>
-      <div className='!bg-sidebar-bg md:!bg-sidebar-bg'>
-        <Sidebar className='border-r-0 border-transparent fixed left-0 h-full z-30 !bg-sidebarBg md:!bg-sidebarBg'>
-          <SidebarContent>
+      <div className='!bg-[#fff] md:!bg-sidebar-bg'>
+        <Sidebar className='border-r-0 border-transparent fixed left-0 h-full z-30 !bg-[#fff] md:!bg-sidebarBg'>
+          <SidebarContent className="bg-[#fff] md:bg-transparent">
             <Link
               href='/'
               className='flex items-center justify-center gap-2 px-3 py-3'
@@ -147,7 +147,7 @@ export default function DashboardSidebar() {
             </SidebarMenu>
           </SidebarContent>
 
-          <SidebarFooter className='p-6'>
+          <SidebarFooter className='p-6 bg-[#fff] md:bg-transparent'>
             <button
               onClick={() => setIsLogoutModalOpen(true)}
               className='flex w-full items-center gap-3  px-4 py-3'
