@@ -42,7 +42,7 @@ export default function JournalPromptsPage() {
     refetchOnMountOrArgChange: true,
   });
 
-  console.log(spirals?.results);
+  console.log("spirals?.results", spirals?.data);
 
   const handleDelete = (id: string) => {
     // if (isDeleteConfirm) {
@@ -81,7 +81,7 @@ export default function JournalPromptsPage() {
 
         {/* Spirals Grid */}
         <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
-          {spirals?.results?.map((spiral: Journal) => (
+          {spirals?.data?.map((spiral: Journal) => (
             <Card
               key={spiral?.id}
               className='bg-[#FFF7EB] border-2 border-orange-200 hover:border-orange-300 transition-colors'

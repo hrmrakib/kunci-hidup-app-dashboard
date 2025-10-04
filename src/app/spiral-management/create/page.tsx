@@ -10,80 +10,111 @@ import { Card, CardContent } from "@/components/ui/card";
 import { ArrowLeft, Upload } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useCreateSpiralMutation } from "@/redux/features/sprial-management/sprialManagementAPI";
+import { toast } from "sonner";
 
 interface DayData {
   id: number;
   enabled: boolean;
   journalPrompt: string;
+  voiceTitle: string;
   voiceFile: File | null;
 }
 
 export default function CreateSpiralPage() {
-  const router = useRouter();
   const [spiralName, setSpiralName] = useState("");
   const [spiralDetails, setSpiralDetails] = useState("");
   const [focusPoint, setFocusPoint] = useState("");
+  const [duration, setDuration] = useState<string | number>("");
   const [days, setDays] = useState<DayData[]>(
     Array.from({ length: 7 }, (_, i) => ({
       id: i + 1,
-      enabled: i === 0 || i === 1 || i === 2 || i === 5 || i === 6, // Default enabled days
+      enabled: i === 0, // default enabled
       journalPrompt: "",
+      voiceTitle: "",
       voiceFile: null,
     }))
   );
 
-  const handleDayToggle = (dayId: number) => {
-    setDays(
-      days.map((day) =>
+  console.log(days);
+
+  const router = useRouter();
+  const [createSpiral, { isLoading }] = useCreateSpiralMutation();
+
+  // ✅ Handlers
+  const handleDayToggle = (dayId: number) =>
+    setDays((prev) =>
+      prev.map((day) =>
         day.id === dayId ? { ...day, enabled: !day.enabled } : day
       )
     );
-  };
 
-  const handleJournalPromptChange = (dayId: number, prompt: string) => {
-    setDays(
-      days.map((day) =>
+  const handleJournalPromptChange = (dayId: number, prompt: string) =>
+    setDays((prev) =>
+      prev.map((day) =>
         day.id === dayId ? { ...day, journalPrompt: prompt } : day
       )
     );
-  };
 
-  const handleVoiceUpload = (dayId: number, file: File | null) => {
-    setDays(
-      days.map((day) => (day.id === dayId ? { ...day, voiceFile: file } : day))
+  const handleVoiceTitleChange = (dayId: number, title: string) =>
+    setDays((prev) =>
+      prev.map((day) =>
+        day.id === dayId ? { ...day, voiceTitle: title } : day
+      )
     );
+
+  const handleVoiceUpload = (dayId: number, file: File | null) =>
+    setDays((prev) =>
+      prev.map((day) => (day.id === dayId ? { ...day, voiceFile: file } : day))
+    );
+
+  const handleSubmit = async () => {
+    try {
+      const formData = new FormData();
+      formData.append("title", spiralName);
+      formData.append("description", spiralDetails);
+      formData.append("focus_point", focusPoint);
+      formData.append("duration", duration?.toString() || "7");
+
+      days
+        .filter((day) => day.enabled)
+        .forEach((day) => {
+          formData.append(`day_${day.id}_number`, String(day.id));
+          formData.append(`day_${day.id}_journal_prompt`, day.journalPrompt);
+          formData.append(
+            `day_${day.id}_voice_title`,
+            day.voiceTitle || `Day ${day.id} Voice`
+          );
+          if (day.voiceFile)
+            formData.append(`day_${day.id}_voice_drop`, day.voiceFile);
+        });
+
+      const res = await createSpiral(formData).unwrap();
+
+      if (res?.data?.success) {
+        toast.success("Spiral created successfully!");
+        console.log("Spiral created:", res);
+        router.push("/spiral-management");
+      }
+    } catch (err: any) {
+      const msg = err?.data?.message || err?.error || "Failed to create spiral";
+      console.warn(" Spiral creation failed:", msg);
+      alert(msg);
+    }
   };
 
-  const handleSubmit = () => {
-    // Here you would typically save the data
-    console.log("[v0] Creating spiral:", {
-      spiralName,
-      spiralDetails,
-      focusPoint,
-      days: days.filter((day) => day.enabled),
-    });
-    router.push("/journal-prompts");
-  };
-
-  const handleCancel = () => {
-    router.push("/journal-prompts");
-  };
+  const handleCancel = () => router.push("/spiral-management");
 
   return (
     <div className='min-h-screen bg-gray-50 p-4 md:p-6'>
-      <div className=''>
+      <div>
         {/* Header */}
         <div className='flex items-center gap-4 mb-8'>
           <Link
-            href='/journal-prompts'
+            href='/spiral-management'
             className='flex items-center text-gray-900'
           >
-            <Button
-              variant='ghost'
-              size='sm'
-              onClick={() => router.back()}
-              className='cursor-pointer'
-            >
+            <Button variant='ghost' size='sm' onClick={() => router.back()}>
               <ArrowLeft className='w-4 h-4 mr-2' />
             </Button>
             Create New Spiral
@@ -93,7 +124,7 @@ export default function CreateSpiralPage() {
         {/* Form */}
         <div className='space-y-6'>
           {/* Basic Info */}
-          <Card className='w-1/2'>
+          <Card className='w-full md:w-1/2'>
             <CardContent className='p-6 space-y-4'>
               <div>
                 <label className='block text-sm font-medium text-gray-700 mb-2'>
@@ -115,20 +146,32 @@ export default function CreateSpiralPage() {
                   className='text-black border !border-gray-400'
                   placeholder='Enter spiral details'
                   value={spiralDetails}
-                  onChange={(e: any) => setSpiralDetails(e.target.value)}
+                  onChange={(e) => setSpiralDetails(e.target.value)}
                   rows={6}
                 />
               </div>
 
               <div>
                 <label className='block text-sm font-medium text-gray-700 mb-2'>
-                  Focus point:
+                  Focus Point:
                 </label>
                 <Input
                   placeholder='Enter focus point'
                   className='text-black border !border-gray-400'
                   value={focusPoint}
                   onChange={(e) => setFocusPoint(e.target.value)}
+                />
+              </div>
+
+              <div>
+                <label className='block text-sm font-medium text-gray-700 mb-2'>
+                  Duration:
+                </label>
+                <Input
+                  type='number'
+                  placeholder='Enter duration in days'
+                  value={duration}
+                  onChange={(e) => setDuration(e.target.value)}
                 />
               </div>
             </CardContent>
@@ -140,7 +183,9 @@ export default function CreateSpiralPage() {
               <Card
                 key={day.id}
                 className={`${
-                  day.enabled ? "border-[#FEAA39]" : "border-gray-200 opacity-60"
+                  day.enabled
+                    ? "border-[#FEAA39]"
+                    : "border-gray-200 opacity-60"
                 }`}
               >
                 <CardContent className='p-6'>
@@ -155,13 +200,28 @@ export default function CreateSpiralPage() {
                   <div className='space-y-4'>
                     <div>
                       <label className='block text-sm font-medium text-gray-700 mb-2'>
-                        Journal prompt:
+                        Voice Title:
+                      </label>
+                      <Input
+                        placeholder='Enter voice title'
+                        value={day.voiceTitle}
+                        onChange={(e) =>
+                          handleVoiceTitleChange(day.id, e.target.value)
+                        }
+                        disabled={!day.enabled}
+                        className='text-black border !border-gray-400'
+                      />
+                    </div>
+
+                    <div>
+                      <label className='block text-sm font-medium text-gray-700 mb-2'>
+                        Journal Prompt:
                       </label>
                       <Textarea
                         placeholder='Enter journal prompt'
                         className='text-black border !border-gray-400'
                         value={day.journalPrompt}
-                        onChange={(e: any) =>
+                        onChange={(e) =>
                           handleJournalPromptChange(day.id, e.target.value)
                         }
                         disabled={!day.enabled}
@@ -210,14 +270,18 @@ export default function CreateSpiralPage() {
 
           {/* Action Buttons */}
           <div className='flex gap-4 justify-end pt-6'>
-            <Button variant='outline' onClick={handleCancel}>
+            <Button
+              className='w-36 h-12 bg-transparent border !border-[#FEAA39] text-[#FEAA39] hover:bg-transparent'
+              onClick={handleCancel}
+            >
               Cancel
             </Button>
             <Button
-              className='bg-orange-500 hover:bg-orange-600 text-white'
+              className='w-36 h-12 bg-[#FEAA39] hover:bg-[#FEAA39] text-white'
               onClick={handleSubmit}
+              disabled={isLoading}
             >
-              Submit
+              {isLoading ? "Submitting..." : "Submit"}
             </Button>
           </div>
         </div>

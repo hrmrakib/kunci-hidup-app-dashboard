@@ -11,7 +11,7 @@ import { ArrowLeft, Upload } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
-  useCreateSprialMutation,
+  useCreateSpiralMutation,
   useGetSprialQuery,
 } from "@/redux/features/sprial-management/sprialManagementAPI";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -43,7 +43,9 @@ export default function EditSpiralPage({
     focus_point: "",
     duration: "",
   });
-  const [createSprialMutation] = useCreateSprialMutation();
+  console.log(formData);
+
+  const [createSprialMutation] = useCreateSpiralMutation();
 
   const [days, setDays] = useState<DayData[]>(
     Array.from({ length: 7 }, (_, i) => ({
@@ -58,6 +60,7 @@ export default function EditSpiralPage({
   );
 
   const { data: spiral, isLoading } = useGetSprialQuery(id);
+
   console.log(spiral?.data?.days);
 
   useEffect(() => {
@@ -121,8 +124,8 @@ export default function EditSpiralPage({
   };
 
   return (
-    <div className='min-h-screen bg-gray-50 p-4 md:p-6 cursor-not-allowed'>
-      <div className='max-w-4xl mx-auto'>
+    <div className='min-h-screen bg-gray-50 p-4 md:p-6'>
+      <div className='container mx-auto'>
         {/* Header */}
         <div className='flex items-center gap-4 mb-8'>
           <Link

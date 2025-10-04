@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import baseAPI from "@/redux/api/baseAPI";
 import { get } from "http";
 
@@ -23,10 +24,21 @@ const sprialManagementAPI = baseAPI.injectEndpoints({
       }),
     }),
 
-    createSprial: builder.mutation({
+    createSpiral: builder.mutation({
       query: (data) => ({
         url: "v1/spiral-journey/spirals/",
         method: "POST",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+        },
+        body: data,
+      }),
+    }),
+
+    updateSprial: builder.mutation({
+      query: ({ id, data }) => ({
+        url: `v1/spiral-journey/spirals/${id}/`,
+        method: "PUT",
         headers: {
           Authorization: `Bearer ${localStorage.getItem("access_token")}`,
         },
@@ -39,6 +51,7 @@ const sprialManagementAPI = baseAPI.injectEndpoints({
 export const {
   useGetAllSprialsQuery,
   useGetSprialQuery,
-  useCreateSprialMutation,
+  useCreateSpiralMutation,
+  useUpdateSprialMutation,
 } = sprialManagementAPI;
 export default sprialManagementAPI;
