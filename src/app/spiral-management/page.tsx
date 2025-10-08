@@ -40,28 +40,30 @@ export interface Journal {
 export default function JournalPromptsPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const [isDeleteConfirm, setIsDeleteConfirm] = useState(false);
-  const [deleteItemId, setDeleteItemId] = useState<string | null>(null);
+  // const [isDeleteConfirm, setIsDeleteConfirm] = useState(false);
+  const [deleteItemId, setDeleteItemId] = useState<string | number>();
   const { data: spirals } = useGetAllSprialsQuery(undefined, {
     refetchOnMountOrArgChange: true,
   });
   const [deleteSprial] = useDeleteSprialMutation();
 
-  console.log("spirals?.results", spirals?.data);
+  const handleDelete = async () => {
+    const res = await deleteSprial(deleteItemId).unwrap();
 
-  const handleDelete = async (id: string) => {
-    if (isDeleteConfirm) {
-      const res = await deleteSprial(id);
+    console.log(res);
 
-      console.log(res);
-
-      if (res?.data?.success) {
-        toast.success("Spiral deleted successfully!");
-        setIsDeleteModalOpen(false);
-        setIsDeleteConfirm(false);
-        setDeleteItemId(null);
-      }
+    if (res?.data?.success) {
+      toast.success("Spiral deleted successfully!");
+      setIsDeleteModalOpen(false);
+      // setIsDeleteConfirm(false);
+      setDeleteItemId(0);
     }
+  };
+
+  const handleModal = (id: string | number) => {
+    setIsDeleteModalOpen(true);
+    // setIsDeleteConfirm(false);
+    setDeleteItemId(id);
   };
 
   return (
@@ -95,67 +97,68 @@ export default function JournalPromptsPage() {
 
         {/* Spirals Grid */}
         <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
-          {spirals?.data?.map((spiral: Journal) => (
-            <Card
-              key={spiral?.id}
-              className='bg-[#FFF7EB] border-2 border-orange-200 hover:border-orange-300 transition-colors'
-            >
-              <CardHeader>
-                <CardTitle className='text-xl text-[#FEAA39] text-center'>
-                  {spiral?.title}
-                </CardTitle>
-              </CardHeader>
-              <CardContent className='space-y-4'>
-                <p className='text-[#404040] text-center leading-relaxed'>
-                  {spiral?.description}
-                </p>
-
-                <div className='flex items-center justify-center gap-2'>
-                  <Badge
-                    variant='secondary'
-                    className='bg-orange-100 text-orange-800'
-                  >
-                    📅 Duration: {spiral?.duration}
-                  </Badge>
-                </div>
-
-                <div className='text-center'>
-                  <p className='text-sm font-medium text-orange-600 mb-2'>
-                    Focus:{" "}
-                    <span className='text-orange-500'>
-                      {spiral?.focus_point}
-                    </span>
+          {spirals?.data?.length > 0 &&
+            spirals?.data?.map((spiral: Journal) => (
+              <Card
+                key={spiral?.id}
+                className='bg-[#FFF7EB] border-2 border-orange-200 hover:border-orange-300 transition-colors'
+              >
+                <CardHeader>
+                  <CardTitle className='text-xl text-[#FEAA39] text-center'>
+                    {spiral?.title}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className='space-y-4'>
+                  <p className='text-[#404040] text-center leading-relaxed'>
+                    {spiral?.description}
                   </p>
-                </div>
 
-                <div className='flex gap-3 pt-4'>
-                  <Link
-                    href={`/spiral-management/edit/${spiral.id}`}
-                    className='flex-1'
-                  >
+                  <div className='flex items-center justify-center gap-2'>
+                    <Badge
+                      variant='secondary'
+                      className='bg-orange-100 text-orange-800'
+                    >
+                      📅 Duration: {spiral?.duration}
+                    </Badge>
+                  </div>
+
+                  <div className='text-center'>
+                    <p className='text-sm font-medium text-orange-600 mb-2'>
+                      Focus:{" "}
+                      <span className='text-orange-500'>
+                        {spiral?.focus_point}
+                      </span>
+                    </p>
+                  </div>
+
+                  <div className='flex gap-3 pt-4'>
+                    <Link
+                      href={`/spiral-management/edit/${spiral.id}`}
+                      className='flex-1'
+                    >
+                      <Button
+                        variant='outline'
+                        className='w-full border !border-[#222222] hover:bg-gray-50 bg-transparent'
+                      >
+                        <Edit className='w-4 h-4 mr-2' />
+                        Edit
+                      </Button>
+                    </Link>
                     <Button
                       variant='outline'
-                      className='w-full border !border-[#222222] hover:bg-gray-50 bg-transparent'
+                      className='flex-1 !border-red-300 text-red-600 hover:bg-red-50 bg-transparent cursor-pointer'
+                      onClick={() => handleModal(spiral.id)}
                     >
-                      <Edit className='w-4 h-4 mr-2' />
-                      Edit
+                      <Trash2 className='w-4 h-4 mr-2' />
+                      Delete
                     </Button>
-                  </Link>
-                  <Button
-                    variant='outline'
-                    className='flex-1 !border-red-300 text-red-600 hover:bg-red-50 bg-transparent cursor-pointer'
-                    onClick={() => setIsDeleteModalOpen(true)}
-                  >
-                    <Trash2 className='w-4 h-4 mr-2' />
-                    Delete
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
         </div>
 
-        {spirals?.results?.length === 0 && (
+        {spirals?.data?.length === 0 && (
           <div className='text-center py-12'>
             <p className='text-gray-500 text-lg'>
               No spirals found matching your search.
@@ -190,11 +193,11 @@ export default function JournalPromptsPage() {
                   Cancel
                 </Button>
                 <Button
-                  onClick={() => handleDelete("5465")}
+                  onClick={() => handleDelete()}
                   className='flex-1 bg-[#FF0000] hover:bg-red-600 cursor-pointer text-white flex items-center justify-center gap-2'
                 >
                   <Trash2 className='w-4 h-4' />
-                  Delete Account
+                  Delete Spiral
                 </Button>
               </div>
             </div>

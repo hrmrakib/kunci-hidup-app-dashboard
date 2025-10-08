@@ -36,7 +36,7 @@ export default function CreateSpiralPage() {
     }))
   );
 
-  console.log(days);
+
 
   const router = useRouter();
   const [createSpiral, { isLoading }] = useCreateSpiralMutation();
@@ -91,7 +91,9 @@ export default function CreateSpiralPage() {
 
       const res = await createSpiral(formData).unwrap();
 
-      if (res?.data?.success) {
+      console.log(res?.success);
+
+      if (res?.success) {
         toast.success("Spiral created successfully!");
         console.log("Spiral created:", res);
         router.push("/spiral-management");

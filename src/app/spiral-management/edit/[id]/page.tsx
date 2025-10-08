@@ -5,7 +5,7 @@ import { use, useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Switch } from "@/components/ui/switch";
+// import { Switch } from "@/components/ui/switch";
 import { Card, CardContent } from "@/components/ui/card";
 import { ArrowLeft, Upload } from "lucide-react";
 import Link from "next/link";
@@ -75,13 +75,13 @@ export default function EditSpiralPage({
     }
   }, [spiral]);
 
-  const handleDayToggle = (dayNumber: number) => {
-    setDays((prev) =>
-      prev.map((day) =>
-        day.day_number === dayNumber ? { ...day, enabled: !day.enabled } : day
-      )
-    );
-  };
+  // const handleDayToggle = (dayNumber: number) => {
+  //   setDays((prev) =>
+  //     prev.map((day) =>
+  //       day.day_number === dayNumber ? { ...day, enabled: !day.enabled } : day
+  //     )
+  //   );
+  // };
 
   // ✅ Handle journal or voice title change
   const handleFieldChange = (
@@ -133,13 +133,6 @@ export default function EditSpiralPage({
     }
   };
 
-  // ✅ Update all active days
-  const handleUpdateAll = async () => {
-    for (const day of days.filter((d) => d.enabled)) {
-      await handleUpdateDay(day);
-    }
-    router.push("/spiral-management");
-  };
 
   if (isLoading)
     return (
