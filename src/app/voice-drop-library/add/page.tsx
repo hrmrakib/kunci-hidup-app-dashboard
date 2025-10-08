@@ -15,6 +15,8 @@ import {
 import { ArrowLeft, Upload } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useCreateVoiceLibraryMutation } from "@/redux/features/voice-library/voiceLibraryAPI";
+import { toast } from "sonner";
 
 export default function AddVoicePage() {
   const router = useRouter();
@@ -25,8 +27,8 @@ export default function AddVoicePage() {
     emotion: "",
     audioFile: null as File | null,
   });
-
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [createVoiceLibrary] = useCreateVoiceLibraryMutation();
 
   const handleInputChange = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -68,13 +70,34 @@ export default function AddVoicePage() {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (validateForm()) {
+      const formDataWithAudio = new FormData();
+
+      formDataWithAudio.append("title", formData.title);
+      formDataWithAudio.append("category", formData.category);
+      formDataWithAudio.append("use_case", formData.useCase);
+      formDataWithAudio.append("emotion", formData.emotion);
+
+      const audioFile = formData.audioFile as File;
+
+      if (audioFile) {
+        formDataWithAudio.append("file", audioFile);
+      }
+
+      const res = await createVoiceLibrary(formDataWithAudio);
+
+      if (res?.data?.success) {
+        toast.success("Voice added successfully!");
+        router.push("/voice-drop-library");
+      }
+
       // Here you would typically send the data to your API
-      console.log("Form submitted:", formData);
-      router.push("/voices");
+      console.log("Form submitted:", res);
+
+      // router.push("/voices");
     }
   };
 
@@ -131,7 +154,10 @@ export default function AddVoicePage() {
                   <SelectTrigger
                     className={errors.category ? "border-red-500" : ""}
                   >
-                    <SelectValue placeholder='Select category' />
+                    <SelectValue
+                      placeholder='Select category'
+                      className='!text-black'
+                    />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value='spiral-journey'>
@@ -242,13 +268,13 @@ export default function AddVoicePage() {
                 type='button'
                 variant='outline'
                 onClick={handleCancel}
-                className='flex-1 border-orange-300 text-orange-600 hover:bg-orange-50 bg-transparent'
+                className='flex-1 border !border-[#FEAA39] text-[#FEAA39] hover:bg-orange-50 bg-transparent'
               >
                 Cancel
               </Button>
               <Button
                 type='submit'
-                className='flex-1 bg-orange-500 hover:bg-orange-600 text-white'
+                className='flex-1 bg-[#FEAA39] hover:bg-[#f1951c] text-white'
               >
                 Submit
               </Button>

@@ -13,19 +13,7 @@ import {
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { useGetAllUsersQuery } from "@/redux/features/user/userAPI";
-
-// Mock data matching the design
-const mockUsers = Array.from({ length: 60 }, (_, i) => ({
-  id: i + 1,
-  slNo: "#BI00001",
-  name: "Hazel Janis",
-  email: "janis202@gmail.com",
-  contactNumber: "+626-445-4928",
-  profileImage: "/user.jpg",
-  country: "Indonesia",
-  disableAccess: false,
-  deleteAccount: false,
-}));
+import { Skeleton } from "@/components/ui/skeleton";
 
 export interface Answer {
   question: string;
@@ -49,21 +37,21 @@ export default function UserListPage() {
   const [answers, setAnswers] = useState<Answer[]>([]);
   const [answersModalOpen, setAnswersModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<UserResponse>();
-  const itemsPerPage = 10;
+  const itemsPerPage = 8; // ✅ show 8 per page
 
-  // Filter users based on search term
-  const filteredUsers = mockUsers.filter(
-    (user) =>
-      user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      user.contactNumber.includes(searchTerm)
-  );
+  const { data: users, isLoading } = useGetAllUsersQuery({});
 
-  // Calculate pagination
+  // ✅ Filter users by search
+  const filteredUsers =
+    users?.results?.filter((u: UserResponse) =>
+      u.full_name.toLowerCase().includes(searchTerm.toLowerCase())
+    ) || [];
+
+  // ✅ Pagination math
   const totalPages = Math.ceil(filteredUsers.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
-  const { data: users } = useGetAllUsersQuery({});
+  const paginatedUsers = filteredUsers.slice(startIndex, endIndex);
 
   const handleActionClick = (user: UserResponse) => {
     setSelectedUser(user);
@@ -84,7 +72,7 @@ export default function UserListPage() {
     }
   };
 
-  // Generate page numbers for pagination
+  // ✅ Generate page numbers with "..." support
   const getPageNumbers = () => {
     const pages = [];
     const maxVisiblePages = 5;
@@ -110,7 +98,6 @@ export default function UserListPage() {
         );
       }
     }
-
     return pages;
   };
 
@@ -128,7 +115,7 @@ export default function UserListPage() {
               value={searchTerm}
               onChange={(e) => {
                 setSearchTerm(e.target.value);
-                setCurrentPage(1);
+                setCurrentPage(1); // ✅ reset to page 1 when searching
               }}
               className='pl-10 text-black'
             />
@@ -139,7 +126,6 @@ export default function UserListPage() {
         <div className='overflow-hidden rounded-lg bg-white shadow'>
           {/* Desktop Table */}
           <div className='hidden md:block'>
-          
             <table className='w-full'>
               <thead className='bg-table-header-bg'>
                 <tr>
@@ -167,10 +153,25 @@ export default function UserListPage() {
                 </tr>
               </thead>
               <tbody className='divide-y divide-gray-200'>
-                {users?.results.map((user: UserResponse, index: number) => (
-                  <tr key={user?.user_id} className='hover:bg-gray-50'>
+                {isLoading ? (
+                  <tr>
+                    <td colSpan={7} className='text-center py-4 space-y-6'>
+                      <Skeleton className='h-10 w-full' />
+                      <Skeleton className='h-10 w-full' />
+                      <Skeleton className='h-10 w-full' />
+                      <Skeleton className='h-10 w-full' />
+                      <Skeleton className='h-10 w-full' />
+                      <Skeleton className='h-10 w-full' />
+                      <Skeleton className='h-10 w-full' />
+                      <Skeleton className='h-10 w-full' />
+                      <Skeleton className='h-10 w-full' />
+                    </td>
+                  </tr>
+                ) : null}
+                {paginatedUsers.map((user: UserResponse, index: number) => (
+                  <tr key={user.user_id} className='hover:bg-gray-50'>
                     <td className='px-6 py-4 text-base text-table-color font-medium'>
-                      {index + 1}
+                      {startIndex + index + 1}
                     </td>
                     <td className='px-6 py-4'>
                       <Avatar className='h-10 w-10'>
@@ -229,8 +230,8 @@ export default function UserListPage() {
               <h2 className='text-sm font-medium text-white'>User List</h2>
             </div>
             <div className='divide-y divide-gray-200'>
-              {users?.results?.map((user: UserResponse) => (
-                <div key={user?.user_id} className='p-4'>
+              {paginatedUsers.map((user: UserResponse) => (
+                <div key={user.user_id} className='p-4'>
                   <div className='flex items-start gap-3'>
                     <Avatar className='h-12 w-12'>
                       <AvatarImage
@@ -335,6 +336,7 @@ export default function UserListPage() {
           of {filteredUsers.length} results
         </div>
 
+        {/* Action Modal */}
         <Dialog open={actionModalOpen} onOpenChange={setActionModalOpen}>
           <DialogContent className='sm:max-w-md'>
             <DialogHeader className='flex flex-row items-center justify-between space-y-0 pb-4'>
@@ -385,47 +387,19 @@ export default function UserListPage() {
                       {selectedUser?.contanct_no}
                     </p>
                   </div>
-                  {/* <div className='flex items-center justify-between border-b pb-5'>
-                    <Label className='text-[#333338] text-xl font-medium'>
-                      Country:
-                    </Label>
-                    <p className='text-[#3e3e41] text-base font-medium'>
-                      {selectedUser?.}
-                    </p>
-                  </div> */}
                 </div>
-
-                <div className='space-y-4 pt-4'>
-                  {/* <div className='flex items-center justify-between border-b pb-5'>
-                    <Label
-                      htmlFor='disable-access'
-                      className='text-[#333338] text-xl font-medium'
-                    >
-                      Disable User Access
-                    </Label>
-                    <Switch
-                      id='disable-access'
-                      checked={selectedUser.disableAccess}
-                      onCheckedChange={(checked) =>
-                        handleToggleChange("disableAccess", checked)
-                      }
-                    />
-                  </div> */}
-                  <div className='flex items-center justify-between'>
-                    <Label
-                      htmlFor='delete-account'
-                      className='text-[#333338] text-xl font-medium'
-                    >
-                      Delete User Account
-                    </Label>
-                    <Button className='bg-red-500'>Delete</Button>
-                  </div>
+                <div className='flex items-center justify-between pt-4'>
+                  <Label className='text-[#333338] text-xl font-medium'>
+                    Delete User Account
+                  </Label>
+                  <Button className='bg-red-500'>Delete</Button>
                 </div>
               </div>
             )}
           </DialogContent>
         </Dialog>
 
+        {/* Answers Modal */}
         <Dialog open={answersModalOpen} onOpenChange={setAnswersModalOpen}>
           <DialogContent className='sm:max-w-2xl max-h-[80vh] overflow-y-auto'>
             <DialogHeader className='flex flex-row items-center justify-between space-y-0 pb-4'>
