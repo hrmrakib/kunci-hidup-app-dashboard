@@ -8,7 +8,11 @@ import { Badge } from "@/components/ui/badge";
 import { Search, Plus, Edit, Trash2, X } from "lucide-react";
 import Link from "next/link";
 import { Dialog, DialogContent, DialogHeader } from "@/components/ui/dialog";
-import { useGetAllSprialsQuery } from "@/redux/features/sprial-management/sprialManagementAPI";
+import {
+  useDeleteSprialMutation,
+  useGetAllSprialsQuery,
+} from "@/redux/features/sprial-management/sprialManagementAPI";
+import { toast } from "sonner";
 
 export interface Day {
   id: number;
@@ -41,13 +45,23 @@ export default function JournalPromptsPage() {
   const { data: spirals } = useGetAllSprialsQuery(undefined, {
     refetchOnMountOrArgChange: true,
   });
+  const [deleteSprial] = useDeleteSprialMutation();
 
   console.log("spirals?.results", spirals?.data);
 
-  const handleDelete = (id: string) => {
-    // if (isDeleteConfirm) {
-    //   setSpirals(spirals.filter((spiral) => spiral.id !== id));
-    // }
+  const handleDelete = async (id: string) => {
+    if (isDeleteConfirm) {
+      const res = await deleteSprial(id);
+
+      console.log(res);
+
+      if (res?.data?.success) {
+        toast.success("Spiral deleted successfully!");
+        setIsDeleteModalOpen(false);
+        setIsDeleteConfirm(false);
+        setDeleteItemId(null);
+      }
+    }
   };
 
   return (

@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import baseAPI from "@/redux/api/baseAPI";
-import { get } from "http";
 
 const sprialManagementAPI = baseAPI.injectEndpoints({
   endpoints: (builder) => ({
@@ -45,6 +44,30 @@ const sprialManagementAPI = baseAPI.injectEndpoints({
         body: data,
       }),
     }),
+
+    updateSpiralDay: builder.mutation<
+      any,
+      { id: string | number; day: number | string; data: any }
+    >({
+      query: ({ id, day, data }) => ({
+        url: `v1/spiral-journey/admin/spirals/${id}/days/${day}/`,
+        method: "PATCH",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+        },
+        body: data,
+      }),
+    }),
+
+    deleteSprial: builder.mutation({
+      query: (id) => ({
+        url: `v1/spiral-journey/spirals/${id}/`,
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+        },
+      }),
+    }),
   }),
 });
 
@@ -53,5 +76,7 @@ export const {
   useGetSprialQuery,
   useCreateSpiralMutation,
   useUpdateSprialMutation,
+  useUpdateSpiralDayMutation,
+  useDeleteSprialMutation,
 } = sprialManagementAPI;
 export default sprialManagementAPI;

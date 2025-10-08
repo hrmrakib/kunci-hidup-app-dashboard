@@ -16,7 +16,6 @@ import {
   useGetSprialQuery,
   useUpdateSpiralDayMutation,
 } from "@/redux/features/sprial-management/sprialManagementAPI";
-import { toast } from "sonner";
 
 interface DayData {
   id: number | null;
@@ -51,6 +50,7 @@ export default function EditSpiralPage({
     }))
   );
 
+  // ✅ Load spiral days from API
   useEffect(() => {
     if (spiral?.data?.days?.length) {
       setDays((prevDays) =>
@@ -75,6 +75,7 @@ export default function EditSpiralPage({
     }
   }, [spiral]);
 
+  // ✅ Handle toggle
   const handleDayToggle = (dayNumber: number) => {
     setDays((prev) =>
       prev.map((day) =>
@@ -118,15 +119,8 @@ export default function EditSpiralPage({
     if (day.voiceFile) formData.append("voice_drop", day.voiceFile);
 
     try {
-      const res = await updateDay({
-        id: id,
-        day: day.day_number,
-        data: formData,
-      }).unwrap();
-
-      if (res?.success) {
-        toast.success(`Day ${day.day_number} updated successfully`);
-      }
+      await updateDay({ id: day.id, data: formData }).unwrap();
+      alert(`✅ Day ${day.day_number} updated successfully`);
     } catch (err) {
       console.error("Failed to update:", err);
       alert(`❌ Failed to update Day ${day.day_number}`);
@@ -143,11 +137,9 @@ export default function EditSpiralPage({
 
   if (isLoading)
     return (
-      <div className='container mx-auto space-y-6 grid grid-cols-1 md:grid-cols-2 gap-6 my-12'>
+      <div className='space-y-6'>
         <Skeleton className='h-96 w-full mx-auto bg-gray-200' />
-        <Skeleton className='h-96 w-full bg-gray-200' />
-        <Skeleton className='h-96 w-full bg-gray-200' />
-        <Skeleton className='h-96 w-full bg-gray-200' />
+        <Skeleton className='h-64 w-full bg-gray-200' />
       </div>
     );
 
@@ -181,10 +173,10 @@ export default function EditSpiralPage({
                   <h3 className='text-lg font-semibold'>
                     Day {day.day_number}
                   </h3>
-                  {/* <Switch
+                  <Switch
                     checked={day.enabled}
                     onCheckedChange={() => handleDayToggle(day.day_number)}
-                  /> */}
+                  />
                 </div>
 
                 <div className='space-y-4'>
@@ -231,7 +223,7 @@ export default function EditSpiralPage({
                     <label className='block text-sm font-medium text-gray-700 mb-2'>
                       Voice Drop:
                     </label>
-                    <div className='w-auto bg-[#F4F4F4] flex items-center gap-2'>
+                    <div className='!w-full bg-[#F4F4F4] flex items-center gap-2'>
                       <Input
                         type='file'
                         accept='audio/*'
@@ -282,6 +274,16 @@ export default function EditSpiralPage({
               </div>
             </Card>
           ))}
+        </div>
+
+        {/* Update All Button */}
+        <div className='flex justify-end mt-8'>
+          <Button
+            className='bg-blue-600 hover:bg-blue-700 text-white px-6'
+            onClick={handleUpdateAll}
+          >
+            Update All Active Days
+          </Button>
         </div>
       </div>
     </div>

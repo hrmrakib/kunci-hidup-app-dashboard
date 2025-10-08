@@ -1,7 +1,6 @@
 "use client";
 
 import type React from "react";
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -13,6 +12,7 @@ import Image from "next/image";
 import { useLoginMutation } from "@/redux/features/auth/authAPI";
 import { useRouter } from "next/navigation";
 import { saveToken } from "@/service/authService";
+import { toast } from "sonner";
 
 export default function SignInPage() {
   const [formData, setFormData] = useState({
@@ -67,10 +67,11 @@ export default function SignInPage() {
         localStorage.setItem("access_token", res?.data?.data?.tokens.access);
         localStorage.setItem("access_token", res?.data?.data?.tokens.refresh);
         await saveToken(res?.data?.data?.tokens.access);
-
+        toast.success("Login successful!");
         router.push("/");
       }
     } catch (error) {
+      toast.error("Login failed! Please try again with valid credentials.");
       console.error("Sign in error:", error);
     } finally {
       setIsLoading(false);
