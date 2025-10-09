@@ -5,32 +5,7 @@ import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { BarChart3, Users } from "lucide-react";
-
-// Mock data for the chart
-const chartData = {
-  thisMonth: [
-    { x: "1k", y: 1800 },
-    { x: "3k", y: 2800 },
-    { x: "6k", y: 2000 },
-    { x: "9k", y: 600 },
-    { x: "12k", y: 4000 },
-    { x: "15k", y: 3800 },
-    { x: "18k", y: 1600 },
-    { x: "21k", y: 3600 },
-    { x: "24k", y: 4200 },
-  ],
-  lastMonth: [
-    { x: "1k", y: 200 },
-    { x: "3k", y: 1200 },
-    { x: "6k", y: 1600 },
-    { x: "9k", y: 800 },
-    { x: "12k", y: 2800 },
-    { x: "15k", y: 3800 },
-    { x: "18k", y: 3200 },
-    { x: "21k", y: 3800 },
-    { x: "24k", y: 2000 },
-  ],
-};
+import chartData from "@/data/chartData.json";
 
 const StatCard = ({
   title,
