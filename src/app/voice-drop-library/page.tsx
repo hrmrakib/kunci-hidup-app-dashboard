@@ -23,9 +23,11 @@ import {
 import Link from "next/link";
 import {
   useChangeStatusMutation,
+  useDeleteVoiceLibraryMutation,
   useGetVoiceLibraryQuery,
 } from "@/redux/features/voice-library/voiceLibraryAPI";
 import { Skeleton } from "@/components/ui/skeleton";
+import { toast } from "sonner";
 
 interface Voice {
   audio_id: string;
@@ -47,10 +49,16 @@ export default function VoicesPage() {
   const itemsPerPage = 10;
 
   // ✅ Always call hooks in the same order
-  const { data, isLoading, isError } = useGetVoiceLibraryQuery(undefined, {
-    refetchOnMountOrArgChange: true,
-  });
-  const [changeStatus] = useChangeStatusMutation();
+  const { data, isLoading, isError, refetch } = useGetVoiceLibraryQuery(
+    undefined,
+    {
+      refetchOnMountOrArgChange: true,
+    }
+  );
+  const [changeStatus, { isLoading: isChangeStatusLoading }] =
+    useChangeStatusMutation();
+  const [deleteVoiceLibrary, { isLoading: isDeleteLoading }] =
+    useDeleteVoiceLibraryMutation();
 
   // ✅ Always run memo, even if loading
   const voices: Voice[] = useMemo(() => {
@@ -90,21 +98,29 @@ export default function VoicesPage() {
     setIsActionModalOpen(true);
   };
 
-  const handleDeleteVoice = (voiceId: string) => {
-    console.log("Delete Voice:=>", voiceId);
-    setIsActionModalOpen(false);
-    setSelectedVoice(null);
+  const handleDeleteVoice = async (voiceId: string) => {
+    const res = await deleteVoiceLibrary(voiceId).unwrap();
+
+    if (res?.success) {
+      refetch();
+      toast.success("Voice deleted successfully!");
+      setIsActionModalOpen(false);
+      setSelectedVoice(null);
+    }
   };
 
   const handleActivationToggle = async (voiceId: string, isActive: boolean) => {
-    console.log(voiceId);
-    // const res = await changeStatus(voiceId).unwrap();
-    // console.log(voiceId, res);
-    return;
-    console.log("Toggle Activation:", voiceId, isActive);
-    setSelectedVoice((prev) =>
-      prev ? { ...prev, status: isActive ? "active" : "inactive" } : null
-    );
+    const res = await changeStatus(voiceId).unwrap();
+    console.log(res);
+
+    if (res?.success) {
+      refetch();
+      toast.success("Status updated successfully!");
+      setSelectedVoice((prev) =>
+        prev ? { ...prev, status: isActive ? "active" : "inactive" } : null
+      );
+      setIsActionModalOpen(false);
+    }
   };
 
   const renderPaginationNumbers = () => {
@@ -146,8 +162,6 @@ export default function VoicesPage() {
       </Button>
     ));
   };
-
-  console.log({ selectedVoice });
 
   // ✅ Always return the same JSX tree structure — no early return
   return (
@@ -334,13 +348,12 @@ export default function VoicesPage() {
                     </span>
                     <Switch
                       checked={selectedVoice.status === "active"}
+                      disabled={isChangeStatusLoading}
                       onCheckedChange={(checked) =>
                         handleActivationToggle(selectedVoice.audio_id, checked)
                       }
                     />
                   </div>
-
-                  <h2>IDDDDDD: {selectedVoice.audio_id}</h2>
 
                   <div className='flex justify-between items-center'>
                     <span className='text-lg font-medium text-gray-700'>
@@ -349,6 +362,7 @@ export default function VoicesPage() {
                     <Button
                       variant='default'
                       size='sm'
+                      disabled={isDeleteLoading}
                       onClick={() => handleDeleteVoice(selectedVoice.audio_id)}
                       className='bg-red-700 hover:bg-red-800 cursor-pointer'
                     >

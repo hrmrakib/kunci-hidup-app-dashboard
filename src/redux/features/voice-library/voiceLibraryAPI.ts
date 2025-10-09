@@ -22,8 +22,19 @@ const voiceLibraryApi = baseAPI.injectEndpoints({
 
     changeStatus: builder.mutation({
       query: (id) => ({
-        url: `change-audio-status?audio_id=${id}`,
+        url: `ai/change-audio-status?audio_id=${id}`,
         method: "PUT",
+        // headers: {
+        //   Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+        // },
+        // body: data,
+      }),
+    }),
+
+    deleteVoiceLibrary: builder.mutation({
+      query: (id) => ({
+        url: `ai/delete-audio?audio_id=${id}`,
+        method: "DELETE",
         // headers: {
         //   Authorization: `Bearer ${localStorage.getItem("access_token")}`,
         // },
@@ -37,5 +48,6 @@ export const {
   useGetVoiceLibraryQuery,
   useCreateVoiceLibraryMutation,
   useChangeStatusMutation,
+  useDeleteVoiceLibraryMutation,
 } = voiceLibraryApi;
 export default voiceLibraryApi;
