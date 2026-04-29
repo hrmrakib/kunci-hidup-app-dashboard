@@ -58,16 +58,26 @@ export default function SignInPage() {
     setIsLoading(true);
 
     try {
-      const res = await loginMutation({
-        email: formData.email,
-        password: formData.password,
-      });
+      const res = await fetch(
+        process.env.NEXT_PUBLIC_API_URL + "v1/account/login/",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email: formData.email,
+            password: formData.password,
+          }),
+        },
+      );
 
-      if (res?.data?.success) {
-        localStorage.setItem("access_token", res?.data?.data?.tokens.access);
-        localStorage.setItem("access_token", res?.data?.data?.tokens.refresh);
-        await saveToken(res?.data?.data?.tokens.access);
-        toast.success("Login successful!");
+      if (res?.ok) {
+        const data = await res.json();
+        localStorage.setItem("access_token", data?.data?.tokens.access);
+        localStorage.setItem("access_token", data?.data?.tokens.refresh);
+        await saveToken(data?.data?.tokens.access);
+        toast.success(data?.message);
         router.push("/");
       }
     } catch (error) {
@@ -111,7 +121,7 @@ export default function SignInPage() {
                   placeholder='Enter your email'
                   value={formData.email}
                   onChange={handleInputChange}
-                  className={`pl-10 bg-gray-50 border-gray-200 focus:bg-white ${
+                  className={`pl-10 h-11! bg-gray-50 border-gray-200 focus:bg-white ${
                     errors.email ? "border-red-500" : ""
                   }`}
                 />
@@ -135,7 +145,7 @@ export default function SignInPage() {
                   placeholder='Min 8 character'
                   value={formData.password}
                   onChange={handleInputChange}
-                  className={`pl-10 pr-10 bg-gray-50 border-gray-200 focus:bg-white ${
+                  className={`pl-10 h-11! pr-10 bg-gray-50 border-gray-200 focus:bg-white ${
                     errors.password ? "border-red-500" : ""
                   }`}
                 />

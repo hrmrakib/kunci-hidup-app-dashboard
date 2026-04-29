@@ -9,6 +9,10 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: "https",
+        hostname: "api.kuncihidupapp.cloud",
+      },
+      {
+        protocol: "https",
         hostname: "api.example.com",
       },
     ],

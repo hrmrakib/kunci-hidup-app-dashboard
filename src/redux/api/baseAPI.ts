@@ -1,20 +1,119 @@
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+"use client";
 
-export const baseAPI = createApi({
-  reducerPath: "api",
-  baseQuery: fetchBaseQuery({
-    baseUrl: process.env.NEXT_PUBLIC_API_URL,
-    prepareHeaders: (headers) => {
+import {
+  BaseQueryFn,
+  createApi,
+  FetchArgs,
+  fetchBaseQuery,
+  FetchBaseQueryError,
+} from "@reduxjs/toolkit/query/react";
+import { toast } from "sonner";
+
+const baseQuery = fetchBaseQuery({
+  baseUrl: process.env.NEXT_PUBLIC_API_URL,
+  prepareHeaders: (headers) => {
+    if (typeof window !== "undefined") {
       const token = localStorage.getItem("access_Token");
-
       if (token) {
         headers.set("Authorization", `Bearer ${token}`);
       }
-      return headers;
-    },
-  }),
+    }
+    return headers;
+  },
+});
+
+let isLoggingOut = false;
+
+const customBaseQuery: BaseQueryFn<
+  // ← added missing `<`
+  FetchArgs | string,
+  unknown,
+  FetchBaseQueryError
+> = async (args, api, extraOptions) => {
+  const result = await baseQuery(args, api, extraOptions);
+
+  if (typeof window === "undefined") {
+    return result;
+  }
+
+  const pathname = window?.location?.pathname || "";
+
+  if (result.error) {
+    const status = result.error.status;
+
+    if (status === 401) {
+      if (!isLoggingOut && pathname !== "/signin") {
+        isLoggingOut = true;
+        localStorage.removeItem("access_Token");
+        toast.error("Session expired. Please login again.");
+        setTimeout(() => {
+          isLoggingOut = false;
+          window.location.replace("/signin");
+        }, 400);
+      }
+    } else if (status === 403) {
+      toast.error("You need to verify your email to use this feature.");
+      window.location.href = "/profile";
+    } else if (status === 402) {
+      toast.error("You need to upgrade your plan to use this feature.");
+      window.location.href = "/#upgrade-plan";
+    }
+
+    return result;
+  }
+
+  const data = result.data as any;
+
+  if (data && data.status === false) {
+    const appStatus = data.status_code as number;
+
+    if (appStatus === 401) {
+      if (!isLoggingOut && pathname !== "/signin") {
+        isLoggingOut = true;
+        localStorage.removeItem("access_Token");
+        toast.error(data.message || "Session expired. Please login again.");
+        setTimeout(() => {
+          isLoggingOut = false;
+          window.location.replace("/signin");
+        }, 400);
+      }
+    } else if (appStatus === 403) {
+      toast.error(
+        data.message || "You need to verify your email to use this feature.",
+      );
+      window.location.href = "/profile";
+    } else if (appStatus === 402) {
+      toast.error(
+        data.message || "You need to upgrade your plan to use this feature.",
+      );
+      window.location.href = "/#upgrade-plan";
+    } else {
+      toast.error(data.message || "Something went wrong.");
+    }
+
+    return {
+      error: {
+        status: appStatus,
+        data: data,
+      } as FetchBaseQueryError,
+    };
+  }
+
+  return result;
+};
+
+export const baseAPI = createApi({
+  reducerPath: "api",
+  baseQuery: customBaseQuery,
   tagTypes: ["Staffs"],
   endpoints: () => ({}),
 });
 
 export default baseAPI;
+
+export type TList = {
+  page?: number;
+  limit?: number;
+  search?: string;
+};
