@@ -9,7 +9,6 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Mail, Lock, Eye, EyeOff } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
-import { useLoginMutation } from "@/redux/features/auth/authAPI";
 import { useRouter } from "next/navigation";
 import { saveToken } from "@/service/authService";
 import { toast } from "sonner";
@@ -23,7 +22,6 @@ export default function SignInPage() {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
-  const [loginMutation] = useLoginMutation();
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -142,7 +140,7 @@ export default function SignInPage() {
                   id='password'
                   name='password'
                   type={showPassword ? "text" : "password"}
-                  placeholder='Min 8 character'
+                  placeholder='Min 6 character'
                   value={formData.password}
                   onChange={handleInputChange}
                   className={`pl-10 h-11! pr-10 bg-gray-50 border-gray-200 focus:bg-white ${
@@ -184,29 +182,6 @@ export default function SignInPage() {
             >
               {isLoading ? "Signing In..." : "Sign in"}
             </Button>
-
-            {/* Divider */}
-            <div className='relative my-6'>
-              <div className='absolute inset-0 flex items-center'>
-                <div className='w-full border-t border-gray-200' />
-              </div>
-              <div className='relative flex justify-center text-sm'>
-                <span className='px-4 bg-white text-gray-500'>Or</span>
-              </div>
-            </div>
-
-            {/* Sign Up Link */}
-            <div className='text-center'>
-              <span className='text-gray-600 text-sm'>
-                Don&apos;t have an account?{" "}
-                <Link
-                  href='/auth/signup'
-                  className='text-[#FEAA39] hover:text-[#e68b15] font-medium transition-colors'
-                >
-                  Sign up
-                </Link>
-              </span>
-            </div>
           </form>
         </CardContent>
       </Card>
