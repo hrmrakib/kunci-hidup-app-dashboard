@@ -2,7 +2,7 @@ import { configureStore } from "@reduxjs/toolkit";
 import baseAPI from "../api/baseAPI";
 import authReducer from "../features/auth/authSlice";
 
-import chatApi from "../features/ai/aiChatAPI";
+import chatApi from "../features/voice-library/voiceLibraryAPI";
 
 export const store = configureStore({
   reducer: {

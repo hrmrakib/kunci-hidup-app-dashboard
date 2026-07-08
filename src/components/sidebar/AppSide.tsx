@@ -45,7 +45,7 @@ export default function DashboardSidebar() {
     pathname === "/forgot-password" ||
     pathname === "/verify-password" ||
     pathname === "/verify-account" ||
-    pathname === "/reset-password" 
+    pathname === "/reset-password"
   ) {
     return null;
   }
@@ -54,7 +54,7 @@ export default function DashboardSidebar() {
     <>
       <div className='!bg-[#fff] md:!bg-sidebar-bg'>
         <Sidebar className='border-r-0 border-transparent fixed left-0 h-full z-30 !bg-[#fff] md:!bg-sidebarBg'>
-          <SidebarContent className="bg-[#fff] md:bg-transparent">
+          <SidebarContent className='bg-[#fff] md:bg-transparent'>
             <Link
               href='/'
               className='flex items-center justify-center gap-2 px-3 py-3'
@@ -96,7 +96,7 @@ export default function DashboardSidebar() {
                 }
               />
 
-              <NavItem
+              {/* <NavItem
                 href='/subscribers'
                 icon={Settings}
                 label='Subscriber'
@@ -104,7 +104,7 @@ export default function DashboardSidebar() {
                   pathname === "/subscribers" ||
                   pathname.startsWith("/subscribers/")
                 }
-              />
+              /> */}
 
               <NavItem
                 href='/spiral-management'
@@ -238,7 +238,7 @@ function NavItem({ href, icon: Icon, label, active = true }: NavItemProps) {
             "flex items-center gap-3 px-4 !py-5 transition-colors rounded-full",
             active
               ? "bg-sidebar-link-bg text-sidebar-active-color"
-              : "text-sidebar-color hover:bg-sidebar-link-bg hover:text-[#fff]"
+              : "text-sidebar-color hover:bg-sidebar-link-bg hover:text-[#fff]",
           )}
         >
           <Icon size={18} />

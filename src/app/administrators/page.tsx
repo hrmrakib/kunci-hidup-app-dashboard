@@ -28,6 +28,7 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
 import { FetchBaseQueryError } from "@reduxjs/toolkit/query";
+import GlobalPagination from "@/components/pagination/GlobalPagination";
 
 interface Administrator {
   id: string;
@@ -49,92 +50,7 @@ export interface Staff {
   created_at: string;
 }
 
-const mockAdministrators: Administrator[] = [
-  {
-    id: "#BI00001",
-    name: "Hazel Janis",
-    email: "janis202@gmail.com",
-    phone: "+626-445-4928",
-    role: "Admin",
-    avatar: "/user.jpg",
-  },
-  {
-    id: "#BI00002",
-    name: "Hazel Janis",
-    email: "janis202@gmail.com",
-    phone: "+626-445-4928",
-    role: "Super Admin",
-    avatar: "/user.jpg",
-  },
-  {
-    id: "#BI00003",
-    name: "Hazel Janis",
-    email: "janis202@gmail.com",
-    phone: "+626-445-4928",
-    role: "Admin",
-    avatar: "/user.jpg",
-  },
-  {
-    id: "#BI00004",
-    name: "Hazel Janis",
-    email: "janis202@gmail.com",
-    phone: "+626-445-4928",
-    role: "Admin",
-    avatar: "/user.jpg",
-  },
-  {
-    id: "#BI00005",
-    name: "Hazel Janis",
-    email: "janis202@gmail.com",
-    phone: "+626-445-4928",
-    role: "Admin",
-    avatar: "/user.jpg",
-  },
-  {
-    id: "#BI00006",
-    name: "Hazel Janis",
-    email: "janis202@gmail.com",
-    phone: "+626-445-4928",
-    role: "Super Admin",
-    avatar: "/user.jpg",
-  },
-  {
-    id: "#BI00007",
-    name: "Hazel Janis",
-    email: "janis202@gmail.com",
-    phone: "+626-445-4928",
-    role: "Super Admin",
-    avatar: "/user.jpg",
-  },
-  {
-    id: "#BI00008",
-    name: "Hazel Janis",
-    email: "janis202@gmail.com",
-    phone: "+626-445-4928",
-    role: "Super Admin",
-    avatar: "/user.jpg",
-  },
-  {
-    id: "#BI00009",
-    name: "Hazel Janis",
-    email: "janis202@gmail.com",
-    phone: "+626-445-4928",
-    role: "Admin",
-    avatar: "/user.jpg",
-  },
-  {
-    id: "#BI00010",
-    name: "Hazel Janis",
-    email: "janis202@gmail.com",
-    phone: "+626-445-4928",
-    role: "Super Admin",
-    avatar: "/user.jpg",
-  },
-];
-
 export default function AdministratorsPage() {
-  const [administrators, setAdministrators] =
-    useState<Administrator[]>(mockAdministrators);
   const [currentPage, setCurrentPage] = useState(1);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -150,17 +66,21 @@ export default function AdministratorsPage() {
   });
 
   const itemsPerPage = 10;
-  const totalPages = Math.ceil(administrators.length / itemsPerPage);
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const endIndex = startIndex + itemsPerPage;
-  const currentAdministrators = administrators.slice(startIndex, endIndex);
+
   const {
     data: staffs,
     isLoading,
     refetch,
-  } = useGetAllStaffsQuery(undefined, {
-    refetchOnMountOrArgChange: true,
-  });
+  } = useGetAllStaffsQuery(
+    {
+      page: currentPage,
+      page_size: itemsPerPage,
+    },
+    {
+      refetchOnMountOrArgChange: true,
+    },
+  );
+  const totalPages = staffs?.total_pages || 1;
 
   const [createAdminMutation] = useCreateAdminMutation();
   const [deleteAdminMutation] = useDeleteAdminMutation();
@@ -256,66 +176,6 @@ export default function AdministratorsPage() {
     }
     setIsDeleteModalOpen(false);
     setCurrentID(null);
-  };
-
-  const renderPagination = () => {
-    const pages = [];
-    const maxVisiblePages = 5;
-
-    if (totalPages <= maxVisiblePages) {
-      for (let i = 1; i <= totalPages; i++) {
-        pages.push(i);
-      }
-    } else {
-      if (currentPage <= 3) {
-        pages.push(1, 2, 3, "...", totalPages);
-      } else if (currentPage >= totalPages - 2) {
-        pages.push(1, "...", totalPages - 2, totalPages - 1, totalPages);
-      } else {
-        pages.push(1, "...", currentPage, "...", totalPages);
-      }
-    }
-
-    return (
-      <div className='flex items-center justify-center gap-2 mt-6'>
-        <Button
-          variant='ghost'
-          size='sm'
-          onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
-          disabled={currentPage === 1}
-          className='text-gray-600'
-        >
-          {"<"}
-        </Button>
-
-        {pages.map((page, index) => (
-          <Button
-            key={index}
-            variant={page === currentPage ? "default" : "ghost"}
-            size='sm'
-            onClick={() => typeof page === "number" && setCurrentPage(page)}
-            disabled={page === "..."}
-            className={
-              page === currentPage
-                ? "bg-orange-500 hover:bg-orange-600 text-white"
-                : "text-gray-600"
-            }
-          >
-            {page}
-          </Button>
-        ))}
-
-        <Button
-          variant='ghost'
-          size='sm'
-          onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
-          disabled={currentPage === totalPages}
-          className='text-gray-600'
-        >
-          {">"}
-        </Button>
-      </div>
-    );
   };
 
   return (
@@ -482,7 +342,11 @@ export default function AdministratorsPage() {
         </div>
 
         {/* Pagination */}
-        {renderPagination()}
+        <GlobalPagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={setCurrentPage}
+        />
 
         {/* Add Administrator Modal */}
         <Dialog open={isAddModalOpen} onOpenChange={setIsAddModalOpen}>

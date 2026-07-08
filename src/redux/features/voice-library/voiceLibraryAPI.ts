@@ -1,6 +1,21 @@
-import baseAPI from "@/redux/api/baseAPI";
+import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
-const voiceLibraryApi = baseAPI.injectEndpoints({
+const baseAIAPI = process.env.NEXT_PUBLIC_AI_URL;
+
+const voiceLibraryApi = createApi({
+  reducerPath: "chatApi",
+  tagTypes: ["Session"],
+  baseQuery: fetchBaseQuery({
+    baseUrl: baseAIAPI,
+    prepareHeaders: (headers) => {
+      const token = localStorage.getItem("access_token");
+      if (token) {
+        headers.set("Authorization", `Bearer ${token}`);
+      }
+      return headers;
+    },
+  }),
+
   endpoints: (builder) => ({
     getVoiceLibrary: builder.query({
       query: () => ({

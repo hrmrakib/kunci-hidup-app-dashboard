@@ -43,7 +43,7 @@ export default function SubscribersPage() {
     (subscriber) =>
       subscriber.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       subscriber.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      subscriber.id.toLowerCase().includes(searchTerm.toLowerCase())
+      subscriber.id.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
   // Calculate pagination
@@ -74,7 +74,7 @@ export default function SubscribersPage() {
           currentPage,
           currentPage + 1,
           "...",
-          totalPages
+          totalPages,
         );
       }
     }

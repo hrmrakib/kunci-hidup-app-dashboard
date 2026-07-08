@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Search, Info, Eye, ChevronLeft, ChevronRight, X } from "lucide-react";
+import { Search, Info, Eye, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -14,6 +14,7 @@ import {
 import { Label } from "@/components/ui/label";
 import { useGetAllUsersQuery } from "@/redux/features/user/userAPI";
 import { Skeleton } from "@/components/ui/skeleton";
+import GlobalPagination from "@/components/pagination/GlobalPagination";
 
 export interface Answer {
   question: string;
@@ -37,21 +38,13 @@ export default function UserListPage() {
   const [answers, setAnswers] = useState<Answer[]>([]);
   const [answersModalOpen, setAnswersModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<UserResponse>();
-  const itemsPerPage = 8; // ✅ show 8 per page
+  const itemsPerPage = 8;
 
-  const { data: users, isLoading } = useGetAllUsersQuery({});
-
-  // ✅ Filter users by search
-  const filteredUsers =
-    users?.results?.filter((u: UserResponse) =>
-      u.full_name.toLowerCase().includes(searchTerm.toLowerCase())
-    ) || [];
-
-  // ✅ Pagination math
-  const totalPages = Math.ceil(filteredUsers.length / itemsPerPage);
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const endIndex = startIndex + itemsPerPage;
-  const paginatedUsers = filteredUsers.slice(startIndex, endIndex);
+  const { data: users, isLoading } = useGetAllUsersQuery({
+    page: currentPage,
+    paze_size: itemsPerPage,
+  });
+  const totalPages = users?.total_pages || 1;
 
   const handleActionClick = (user: UserResponse) => {
     setSelectedUser(user);
@@ -61,44 +54,6 @@ export default function UserListPage() {
   const handleViewAnswerClick = (answers: Answer[]) => {
     setAnswers(answers);
     setAnswersModalOpen(true);
-  };
-
-  const handleToggleChange = (
-    field: "disableAccess" | "deleteAccount",
-    value: boolean
-  ) => {
-    if (selectedUser) {
-      setSelectedUser({ ...selectedUser, [field]: value });
-    }
-  };
-
-  // ✅ Generate page numbers with "..." support
-  const getPageNumbers = () => {
-    const pages = [];
-    const maxVisiblePages = 5;
-
-    if (totalPages <= maxVisiblePages) {
-      for (let i = 1; i <= totalPages; i++) {
-        pages.push(i);
-      }
-    } else {
-      if (currentPage <= 3) {
-        pages.push(1, 2, 3, "...", totalPages);
-      } else if (currentPage >= totalPages - 2) {
-        pages.push(1, "...", totalPages - 2, totalPages - 1, totalPages);
-      } else {
-        pages.push(
-          1,
-          "...",
-          currentPage - 1,
-          currentPage,
-          currentPage + 1,
-          "...",
-          totalPages
-        );
-      }
-    }
-    return pages;
   };
 
   return (
@@ -168,10 +123,10 @@ export default function UserListPage() {
                     </td>
                   </tr>
                 ) : null}
-                {paginatedUsers.map((user: UserResponse, index: number) => (
+                {users?.results?.map((user: UserResponse, index: number) => (
                   <tr key={user.user_id} className='hover:bg-gray-50'>
                     <td className='px-6 py-4 text-base text-table-color font-medium'>
-                      {startIndex + index + 1}
+                      {(currentPage - 1) * itemsPerPage + index + 1}
                     </td>
                     <td className='px-6 py-4'>
                       <Avatar className='h-10 w-10'>
@@ -230,7 +185,7 @@ export default function UserListPage() {
               <h2 className='text-sm font-medium text-white'>User List</h2>
             </div>
             <div className='divide-y divide-gray-200'>
-              {paginatedUsers.map((user: UserResponse) => (
+              {users?.results?.map((user: UserResponse) => (
                 <div key={user.user_id} className='p-4'>
                   <div className='flex items-start gap-3'>
                     <Avatar className='h-12 w-12'>
@@ -285,56 +240,11 @@ export default function UserListPage() {
         </div>
 
         {/* Pagination */}
-        <div className='mt-6 flex items-center justify-center gap-2'>
-          <Button
-            variant='ghost'
-            size='sm'
-            onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
-            disabled={currentPage === 1}
-            className='h-8 w-8 p-0'
-          >
-            <ChevronLeft className='h-4 w-4' />
-          </Button>
-
-          {getPageNumbers().map((page, index) => (
-            <div key={index}>
-              {page === "..." ? (
-                <span className='px-2 text-gray-500'>...</span>
-              ) : (
-                <Button
-                  variant={currentPage === page ? "default" : "ghost"}
-                  size='sm'
-                  onClick={() => setCurrentPage(page as number)}
-                  className={`h-8 w-8 p-0 ${
-                    currentPage === page
-                      ? "bg-orange-400 text-white hover:bg-orange-500"
-                      : "hover:bg-gray-100"
-                  }`}
-                >
-                  {page}
-                </Button>
-              )}
-            </div>
-          ))}
-
-          <Button
-            variant='ghost'
-            size='sm'
-            onClick={() =>
-              setCurrentPage(Math.min(totalPages, currentPage + 1))
-            }
-            disabled={currentPage === totalPages}
-            className='h-8 w-8 p-0'
-          >
-            <ChevronRight className='h-4 w-4' />
-          </Button>
-        </div>
-
-        {/* Results info */}
-        <div className='mt-4 text-center text-sm text-gray-600'>
-          Showing {startIndex + 1} to {Math.min(endIndex, filteredUsers.length)}{" "}
-          of {filteredUsers.length} results
-        </div>
+        <GlobalPagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={setCurrentPage}
+        />
 
         {/* Action Modal */}
         <Dialog open={actionModalOpen} onOpenChange={setActionModalOpen}>
