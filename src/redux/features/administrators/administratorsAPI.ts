@@ -6,9 +6,6 @@ const AdministratorsAPI = baseAPI.injectEndpoints({
       query: () => ({
         url: "v1/administration/staff/list/",
         method: "GET",
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-        },
       }),
       providesTags: ["Staffs"],
     }),
@@ -17,9 +14,6 @@ const AdministratorsAPI = baseAPI.injectEndpoints({
       query: (data) => ({
         url: "v1/administration/create-admin/",
         method: "POST",
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-        },
         body: data,
       }),
     }),
@@ -28,9 +22,6 @@ const AdministratorsAPI = baseAPI.injectEndpoints({
       query: ({ id, data }) => ({
         url: `v1/administration/admin-update/${id}/`,
         method: "PATCH",
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-        },
         body: data,
       }),
     }),
@@ -39,9 +30,6 @@ const AdministratorsAPI = baseAPI.injectEndpoints({
       query: (id) => ({
         url: `v1/administration/delete/${id}/`,
         method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-        },
       }),
     }),
   }),

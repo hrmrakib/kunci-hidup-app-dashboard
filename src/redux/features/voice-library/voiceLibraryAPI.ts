@@ -13,9 +13,6 @@ const voiceLibraryApi = baseAPI.injectEndpoints({
       query: (data) => ({
         url: "ai/upload-audio",
         method: "POST",
-        // headers: {
-        //   Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-        // },
         body: data,
       }),
     }),
@@ -24,10 +21,6 @@ const voiceLibraryApi = baseAPI.injectEndpoints({
       query: (id) => ({
         url: `ai/change-audio-status?audio_id=${id}`,
         method: "PUT",
-        // headers: {
-        //   Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-        // },
-        // body: data,
       }),
     }),
 
@@ -35,10 +28,6 @@ const voiceLibraryApi = baseAPI.injectEndpoints({
       query: (id) => ({
         url: `ai/delete-audio?audio_id=${id}`,
         method: "DELETE",
-        // headers: {
-        //   Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-        // },
-        // body: data,
       }),
     }),
   }),

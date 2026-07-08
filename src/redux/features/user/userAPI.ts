@@ -6,9 +6,6 @@ const userAPI = baseAPI.injectEndpoints({
       query: () => ({
         url: "v1/dashboard/user-management/",
         method: "GET",
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-        },
       }),
     }),
   }),

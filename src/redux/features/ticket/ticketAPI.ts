@@ -6,9 +6,6 @@ const ticketAPI = baseAPI.injectEndpoints({
       query: (data) => ({
         url: "api/tickets/",
         method: "POST",
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-        },
         body: data,
       }),
     }),
@@ -17,9 +14,6 @@ const ticketAPI = baseAPI.injectEndpoints({
       query: (data) => ({
         url: "api/ticket/purchase-tickets/",
         method: "POST",
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-        },
         body: data,
       }),
     }),
@@ -28,9 +22,6 @@ const ticketAPI = baseAPI.injectEndpoints({
       query: () => ({
         url: "api/ticket/available-ticket/",
         method: "GET",
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-        },
       }),
     }),
 
@@ -38,9 +29,6 @@ const ticketAPI = baseAPI.injectEndpoints({
       query: () => ({
         url: "api/subscription/my-subscription-tickets/",
         method: "GET",
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-        },
       }),
     }),
   }),

@@ -7,9 +7,6 @@ const sprialManagementAPI = baseAPI.injectEndpoints({
       query: () => ({
         url: "v1/spiral-journey/spirals/",
         method: "GET",
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-        },
       }),
     }),
 
@@ -17,9 +14,6 @@ const sprialManagementAPI = baseAPI.injectEndpoints({
       query: (id) => ({
         url: `v1/spiral-journey/spirals/${id}/`,
         method: "GET",
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-        },
       }),
     }),
 
@@ -27,9 +21,6 @@ const sprialManagementAPI = baseAPI.injectEndpoints({
       query: (data) => ({
         url: "v1/spiral-journey/spirals/",
         method: "POST",
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-        },
         body: data,
       }),
     }),
@@ -38,9 +29,6 @@ const sprialManagementAPI = baseAPI.injectEndpoints({
       query: ({ id, data }) => ({
         url: `v1/spiral-journey/spirals/${id}/`,
         method: "PUT",
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-        },
         body: data,
       }),
     }),
@@ -52,9 +40,6 @@ const sprialManagementAPI = baseAPI.injectEndpoints({
       query: ({ id, day, data }) => ({
         url: `v1/spiral-journey/admin/spirals/${id}/days/${day}/`,
         method: "PATCH",
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-        },
         body: data,
       }),
     }),
@@ -63,9 +48,6 @@ const sprialManagementAPI = baseAPI.injectEndpoints({
       query: (id) => ({
         url: `v1/spiral-journey/spirals/${id}/`,
         method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-        },
       }),
     }),
   }),

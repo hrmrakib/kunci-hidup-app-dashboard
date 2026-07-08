@@ -1,6 +1,6 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
-const baseAPI = "http://10.10.12.111:8001/";
+const baseAPI = process.env.NEXT_PUBLIC_AI_URL;
 
 export const chatApi = createApi({
   reducerPath: "chatApi",
@@ -21,9 +21,6 @@ export const chatApi = createApi({
       query: (id) => ({
         url: `/ai/all_chat/?session_id=${id}`,
         method: "GET",
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-        },
       }),
     }),
 
@@ -31,9 +28,6 @@ export const chatApi = createApi({
       query: (email) => ({
         url: `/ai/all_sessions/?email=${email}`,
         method: "GET",
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-        },
       }),
     }),
 
@@ -41,9 +35,6 @@ export const chatApi = createApi({
       query: (data) => ({
         url: "/ai/chat_session/",
         method: "POST",
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-        },
         body: data,
       }),
     }),
@@ -53,9 +44,6 @@ export const chatApi = createApi({
         url: `/ai/delete_session_chats/`,
         method: "DELETE",
         body,
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-        },
       }),
     }),
 
@@ -63,9 +51,6 @@ export const chatApi = createApi({
       query: (data) => ({
         url: "/ai/chat/",
         method: "POST",
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-        },
         body: data,
       }),
     }),
@@ -74,9 +59,6 @@ export const chatApi = createApi({
       query: ({ q, email }) => ({
         url: `/ai/search/?q=${q}&email=${email}`,
         method: "GET",
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-        },
       }),
     }),
 
@@ -84,9 +66,6 @@ export const chatApi = createApi({
       query: (id) => ({
         url: `/ai/chat/${id}/`,
         method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-        },
       }),
     }),
   }),

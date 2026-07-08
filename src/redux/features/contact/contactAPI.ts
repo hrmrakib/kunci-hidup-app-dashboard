@@ -6,9 +6,6 @@ const contactAPI = baseAPI.injectEndpoints({
       query: (data) => ({
         url: "api/dicipline/contact-form/",
         method: "POST",
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-        },
         body: data,
       }),
     }),

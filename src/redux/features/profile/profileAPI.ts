@@ -6,9 +6,6 @@ const profileAPI = baseAPI.injectEndpoints({
       query: () => ({
         url: "api/auth/update-profile/",
         method: "GET",
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-        },
       }),
     }),
 
@@ -16,9 +13,6 @@ const profileAPI = baseAPI.injectEndpoints({
       query: (data) => ({
         url: "api/auth/update-profile/",
         method: "PUT",
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-        },
         body: data,
       }),
     }),
