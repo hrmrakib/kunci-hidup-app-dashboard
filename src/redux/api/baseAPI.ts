@@ -12,9 +12,12 @@ import { toast } from "sonner";
 
 const baseQuery = fetchBaseQuery({
   baseUrl: process.env.NEXT_PUBLIC_API_URL,
+  credentials: "include",
   prepareHeaders: (headers) => {
+    console.log("Preparing headers for API request", window?.location?.href);
+
     if (typeof window !== "undefined") {
-      const token = localStorage.getItem("access_Token");
+      const token = localStorage?.getItem("access_token");
       if (token) {
         headers.set("Authorization", `Bearer ${token}`);
       }
@@ -26,7 +29,6 @@ const baseQuery = fetchBaseQuery({
 let isLoggingOut = false;
 
 const customBaseQuery: BaseQueryFn<
-  // ← added missing `<`
   FetchArgs | string,
   unknown,
   FetchBaseQueryError
@@ -43,13 +45,14 @@ const customBaseQuery: BaseQueryFn<
     const status = result.error.status;
 
     if (status === 401) {
-      if (!isLoggingOut && pathname !== "/signin") {
+      if (!isLoggingOut && pathname !== "/login") {
         isLoggingOut = true;
-        localStorage.removeItem("access_Token");
+        localStorage?.removeItem("access_token");
         toast.error("Session expired. Please login again.");
+
         setTimeout(() => {
           isLoggingOut = false;
-          window.location.replace("/signin");
+          window.location.replace("/login");
         }, 400);
       }
     } else if (status === 403) {
@@ -69,13 +72,14 @@ const customBaseQuery: BaseQueryFn<
     const appStatus = data.status_code as number;
 
     if (appStatus === 401) {
-      if (!isLoggingOut && pathname !== "/signin") {
+      if (!isLoggingOut && pathname !== "/login") {
         isLoggingOut = true;
-        localStorage.removeItem("access_Token");
+        localStorage?.removeItem("access_token");
         toast.error(data.message || "Session expired. Please login again.");
+
         setTimeout(() => {
           isLoggingOut = false;
-          window.location.replace("/signin");
+          window.location.replace("/login");
         }, 400);
       }
     } else if (appStatus === 403) {
@@ -106,7 +110,7 @@ const customBaseQuery: BaseQueryFn<
 export const baseAPI = createApi({
   reducerPath: "api",
   baseQuery: customBaseQuery,
-  tagTypes: ["Staffs"],
+  tagTypes: ["Product", "User", "Video", "Order"],
   endpoints: () => ({}),
 });
 

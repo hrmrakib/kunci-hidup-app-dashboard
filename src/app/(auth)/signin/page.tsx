@@ -73,7 +73,7 @@ export default function SignInPage() {
       if (res?.ok) {
         const data = await res.json();
         localStorage.setItem("access_token", data?.data?.tokens.access);
-        localStorage.setItem("access_token", data?.data?.tokens.refresh);
+        localStorage.setItem("refresh_token", data?.data?.tokens.refresh);
         await saveToken(data?.data?.tokens.access);
         toast.success(data?.message);
         router.push("/");
