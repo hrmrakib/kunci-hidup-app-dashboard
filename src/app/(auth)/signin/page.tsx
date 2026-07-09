@@ -54,6 +54,7 @@ export default function SignInPage() {
     if (!validateForm()) return;
 
     setIsLoading(true);
+    setErrors({}); // Clear old errors on new submit
 
     try {
       const res = await fetch(
@@ -70,17 +71,32 @@ export default function SignInPage() {
         },
       );
 
-      if (res?.ok) {
-        const data = await res.json();
-        localStorage.setItem("access_token", data?.data?.tokens.access);
-        localStorage.setItem("refresh_token", data?.data?.tokens.refresh);
-        await saveToken(data?.data?.tokens.access);
-        toast.success(data?.message);
-        router.push("/");
+      // 1. Handle HTTP error statuses (e.g., 400, 401, 500)
+      if (!res.ok) {
+        const errorData = await res.json();
+
+        const errorMessage =
+          errorData?.errors?.non_field_errors?.[0] ||
+          errorData?.errors?.email?.[0] ||
+          errorData?.message ||
+          "An unexpected error occurred. Please try again.";
+
+        toast.error(errorMessage);
+        setErrors({ root: errorMessage });
+        return; // Stop execution here
       }
-    } catch (error) {
-      toast.error("Login failed! Please try again with valid credentials.");
-      console.error("Sign in error:", error);
+
+      // 2. Handle successful response (res.ok is true)
+      const data = await res.json();
+      localStorage.setItem("access_token", data?.data?.tokens.access);
+      localStorage.setItem("refresh_token", data?.data?.tokens.refresh);
+      await saveToken(data?.data?.tokens.access);
+      toast.success(data?.message || "Login successful!");
+      router.push("/");
+    } catch (error: any) {
+      // This will now catch genuine network errors / server crashes
+      console.error("Network or parsing error:", error);
+      toast.error("Network error. Please check your internet connection.");
     } finally {
       setIsLoading(false);
     }

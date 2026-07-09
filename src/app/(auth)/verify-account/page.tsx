@@ -115,9 +115,17 @@ function VerifyAccountContent() {
       // Clear current OTP and focus first input
       setOtp(["", "", "", "", "", ""]);
       inputRefs.current[0]?.focus();
-    } catch (error) {
-      setError("Failed to resend code. Please try again.");
-      console.log(error);
+    } catch (error: any) {
+      console.error("Error sending reset email:", error);
+
+      const errorMessage =
+        error?.data?.errors?.email?.[0] ||
+        error?.data?.message ||
+        "Failed to send reset email. Please try again.";
+
+      toast.error(errorMessage);
+
+      setError(errorMessage);
     } finally {
       setIsResending(false);
     }
