@@ -86,6 +86,7 @@ function VerifyAccountContent() {
 
     try {
       const res = await verifyForgetPasswordOtpMutation({
+        email,
         otp: otpCode,
       }).unwrap();
 
@@ -208,7 +209,9 @@ function VerifyAccountContent() {
 }
 
 export default function VerifyAccountContentPage() {
-  <Suspense fallback={<p>Loading ...</p>}>
-    <VerifyAccountContent />
-  </Suspense>;
+  return (
+    <Suspense fallback={<p>Loading ...</p>}>
+      <VerifyAccountContent />
+    </Suspense>
+  );
 }
