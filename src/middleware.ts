@@ -19,7 +19,7 @@ export const config = {
   matcher: [
     "/",
     "/dashboard",
-    // "/user-management",
+    "/user-management",
     "/administrators",
     "/subscribers",
     "/spiral-management",
