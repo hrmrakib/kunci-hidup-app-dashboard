@@ -44,11 +44,19 @@ export default function ForgotPasswordPage() {
 
       if (res?.success) {
         toast.success("OTP has been sent to your email.");
-        router.push("/verify-account");
+        router.push(`/verify-account?email=${encodeURIComponent(email)}`);
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error sending reset email:", error);
-      setErrors({ email: "Failed to send reset email. Please try again." });
+
+      const errorMessage =
+        error?.data?.errors?.email?.[0] ||
+        error?.data?.message ||
+        "Failed to send reset email. Please try again.";
+
+      toast.error(errorMessage);
+
+      setErrors({ email: errorMessage });
     } finally {
       setIsLoading(false);
     }

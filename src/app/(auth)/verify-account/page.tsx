@@ -1,16 +1,18 @@
 "use client";
 import type React from "react";
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, Suspense } from "react";
 import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Image from "next/image";
 import { useVerifyForgetPasswordOtpMutation } from "@/redux/features/auth/authAPI";
 import { toast } from "sonner";
 
-export default function VerifyAccountPage() {
+function VerifyAccountContent() {
+  const searchParams = useSearchParams();
+  const email = searchParams.get("email");
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
@@ -203,4 +205,10 @@ export default function VerifyAccountPage() {
       </div>
     </div>
   );
+}
+
+export default function VerifyAccountContentPage() {
+  <Suspense fallback={<p>Loading ...</p>}>
+    <VerifyAccountContent />
+  </Suspense>;
 }
