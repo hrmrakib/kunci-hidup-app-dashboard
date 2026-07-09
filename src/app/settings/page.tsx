@@ -1,6 +1,13 @@
 "use client";
 
-import { User, Lock, ChevronRight, GlobeLock } from "lucide-react";
+import {
+  User,
+  Lock,
+  ChevronRight,
+  GlobeLock,
+  Handshake,
+  FileTerminal,
+} from "lucide-react";
 import Link from "next/link";
 
 export default function SettingsPage() {
@@ -18,10 +25,22 @@ export default function SettingsPage() {
       href: "/settings/change-password",
     },
     {
-      id: "terms",
+      id: "privacy",
       title: "Privacy & Policy",
       icon: GlobeLock,
       href: "/settings/privacy-policy",
+    },
+    {
+      id: "terms",
+      title: "Terms & Conditions",
+      icon: FileTerminal,
+      href: "/settings/terms-conditions",
+    },
+    {
+      id: "trust",
+      title: "Trust & Safety",
+      icon: Handshake,
+      href: "/settings/trust-safety",
     },
   ];
 

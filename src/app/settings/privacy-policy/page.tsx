@@ -14,7 +14,7 @@ export default function PrivacyPolicyPage() {
           <div className='max-w-3xl mx-auto'>
             <div className='mb-6 flex items-center justify-between'>
               <Link
-                href='/setting'
+                href='/settings'
                 className='inline-flex items-center text-primary hover:text-teal-700'
               >
                 <ArrowLeft className='mr-2 h-4 w-4' />

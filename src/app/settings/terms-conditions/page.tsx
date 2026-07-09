@@ -1,82 +1,54 @@
 "use client";
 
+import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { Button } from "@/components/ui/button";
+import { useGetPrivacyPolicyQuery } from "@/redux/features/setting/settingAPI";
 
-export default function TermsConditionsPage() {
-  const router = useRouter();
-
-  const handleEdit = () => {
-    router.push("/settings/terms-conditions/edit");
-  };
+export default function PrivacyPolicyPage() {
+  const { data: privacyPolicy } = useGetPrivacyPolicyQuery({});
 
   return (
-    <div className='min-h-screen bg-gray-50 p-4 md:p-6'>
-      <div className='mx-auto max-w-4xl'>
-        {/* Header */}
-        <div className='mb-6 flex items-center gap-4'>
-          <button
-            onClick={() => router.back()}
-            className='flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors'
-          >
-            <ArrowLeft className='h-5 w-5' />
-            <span className='text-lg font-medium'>Terms & conditions</span>
-          </button>
-        </div>
+    <div className='flex min-h-screen bg-transparent'>
+      <div className='flex-1 w-full'>
+        <main className='w-full p-4 md:p-6'>
+          <div className='max-w-3xl mx-auto'>
+            <div className='mb-6 flex items-center justify-between'>
+              <Link
+                href='/settings'
+                className='inline-flex items-center text-primary hover:text-teal-700'
+              >
+                <ArrowLeft className='mr-2 h-4 w-4' />
+                <span className='text-xl font-semibold'>Privacy Policy</span>
+              </Link>
 
-        {/* Content */}
-        <div className='bg-white rounded-lg shadow-sm p-6 md:p-8'>
-          <h1 className='text-2xl md:text-3xl font-bold text-gray-900 mb-8'>
-            Terms & Conditions
-          </h1>
+              <Link
+                href='/settings/privacy-policy/edit'
+                className='inline-flex items-center text-primary hover:text-teal-700 border border-[#760C2A] rounded-md px-4 py-1.5'
+              >
+                <span className='text-xl font-semibold'>Edit</span>
+              </Link>
+            </div>
 
-          <div className='prose prose-gray max-w-none'>
-            <p className='text-gray-700 leading-relaxed mb-6'>
-              Lorem Ipsum is simply dummy text of the printing and typesetting
-              industry. Lorem Ipsum has been the industry&apos;s standard dummy
-              text ever since the 1500s, when an unknown printer took a galley
-              of type and scrambled it to make a type specimen book. It has
-              survived not only five centuries, but also the leap into
-              electronic typesetting, remaining essentially unchanged. It was
-              popularised in the 1960s with the release of Letraset sheets
-              containing Lorem Ipsum passages, and more recently with desktop
-              publishing software like Aldus PageMaker including versions of
-              Lorem Ipsum. Lorem Ipsum is simply dummy text of the printing and
-              typesetting industry. Lorem Ipsum has been the industry&apos;s
-              standard dummy text ever since the 1500s, when an unknown printer
-              took a galley of type and scrambled it to make a type specimen
-              book. It has survived not only five centuries.
-            </p>
+            <div className='prose prose-sm max-w-none'>
+              <h2 className='text-xl font-semibold text-black mb-4'>
+                Privacy Policy Content
+              </h2>
+            </div>
 
-            <p className='text-gray-700 leading-relaxed mb-8'>
-              Lorem Ipsum is simply dummy text of the printing and typesetting
-              industry. Lorem Ipsum has been the industry&apos;s standard dummy
-              text ever since the 1500s, when an unknown printer took a galley
-              of type and scrambled it to make a type specimen book. It has
-              survived not only five centuries, but also the leap into
-              electronic typesetting, remaining essentially unchanged. It was
-              popularised in the 1960s with the release of Letraset sheets
-              containing Lorem Ipsum passages, and more recently with desktop
-              publishing software like Aldus PageMaker including versions of
-              Lorem Ipsum. Lorem Ipsum is simply dummy text of the printing and
-              typesetting industry. Lorem Ipsum has been the industry&apos;s
-              standard dummy text ever since the 1500s, when an unknown printer
-              took a galley of type and scrambled it to make a type specimen
-              book. It has survived not only five centuries.
-            </p>
+            <div className='text-black'>
+              {privacyPolicy?.description ? (
+                <div
+                  className='prose prose-sm max-w-none'
+                  dangerouslySetInnerHTML={{
+                    __html: privacyPolicy?.description,
+                  }}
+                />
+              ) : (
+                <p>Loading content...</p>
+              )}
+            </div>
           </div>
-
-          {/* Edit Button */}
-          <div className='flex justify-end mt-8'>
-            <Button
-              onClick={handleEdit}
-              className='bg-orange-500 hover:bg-orange-600 text-white px-8 py-2 rounded-lg font-medium transition-colors'
-            >
-              Edit
-            </Button>
-          </div>
-        </div>
+        </main>
       </div>
     </div>
   );
