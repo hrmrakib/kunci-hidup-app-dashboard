@@ -45,14 +45,14 @@ const customBaseQuery: BaseQueryFn<
     const status = result.error.status;
 
     if (status === 401) {
-      if (!isLoggingOut && pathname !== "/login") {
+      if (!isLoggingOut && pathname !== "/signin") {
         isLoggingOut = true;
         localStorage?.removeItem("access_token");
         toast.error("Session expired. Please login again.");
 
         setTimeout(() => {
           isLoggingOut = false;
-          window.location.replace("/login");
+          window.location.replace("/signin");
         }, 400);
       }
     } else if (status === 403) {
@@ -72,14 +72,14 @@ const customBaseQuery: BaseQueryFn<
     const appStatus = data.status_code as number;
 
     if (appStatus === 401) {
-      if (!isLoggingOut && pathname !== "/login") {
+      if (!isLoggingOut && pathname !== "/signin") {
         isLoggingOut = true;
         localStorage?.removeItem("access_token");
         toast.error(data.message || "Session expired. Please login again.");
 
         setTimeout(() => {
           isLoggingOut = false;
-          window.location.replace("/login");
+          window.location.replace("/signin");
         }, 400);
       }
     } else if (appStatus === 403) {

@@ -26,5 +26,8 @@ export const config = {
     "/journal-pro-manager",
     "/voice-drop-library",
     "/settings",
+    "/settings/personal-information",
+    "/settings/change-password",
+    "/settings/privacy-policy",
   ],
 };

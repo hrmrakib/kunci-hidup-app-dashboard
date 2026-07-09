@@ -33,8 +33,8 @@ export default function DashboardSidebar() {
   const pathname = usePathname();
 
   const handleLogout = async () => {
-    localStorage.removeItem("accessToken");
-    localStorage.removeItem("refreshToken");
+    localStorage.removeItem("access_token");
+    localStorage.removeItem("refresh_token");
     await logout();
     router.push("/signin");
   };
