@@ -9,11 +9,11 @@ import Loading from "@/components/loading/Loading";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import {
-  useGetPrivacyPolicyQuery,
-  useSetPrivacyPolicyMutation,
+  useGetTrustSafetyQuery,
+  useSetTrustSafetyMutation,
 } from "@/redux/features/setting/settingAPI";
 
-const EditPrivacyPolicy = () => {
+const EditTrustSafety = () => {
   const editorRef = useRef<HTMLDivElement>(null);
   const quillRef = useRef<Quill | null>(null);
   const [content, setContent] = useState<string>("");
@@ -23,10 +23,10 @@ const EditPrivacyPolicy = () => {
     data: privacyPolicy,
     isLoading,
     refetch,
-  } = useGetPrivacyPolicyQuery({});
+  } = useGetTrustSafetyQuery({});
 
   const [setPrivacyPolicy, { isLoading: isSaving }] =
-    useSetPrivacyPolicyMutation();
+    useSetTrustSafetyMutation();
 
   useEffect(() => {
     let initialized = false;
@@ -40,7 +40,7 @@ const EditPrivacyPolicy = () => {
       if (editorRef.current && !editorRef.current.querySelector(".ql-editor")) {
         const quill = new Quill(editorRef.current, {
           theme: "snow",
-          placeholder: "Enter your Terms and Conditions...",
+          placeholder: "Enter your trust & safety...",
         });
 
         quillRef.current = quill;
@@ -71,9 +71,9 @@ const EditPrivacyPolicy = () => {
     try {
       const res = await setPrivacyPolicy({ description: content }).unwrap();
       if (res?.description) {
-        toast.success("Terms and Conditions saved successfully!");
-        router.push("/settings/privacy-policy");
-        refetch()
+        toast.success("Trust & safety saved successfully!");
+        router.push("/settings/trust-safety");
+        refetch();
       } else {
         toast.error("Failed to save.");
       }
@@ -106,4 +106,4 @@ const EditPrivacyPolicy = () => {
   );
 };
 
-export default EditPrivacyPolicy;
+export default EditTrustSafety;

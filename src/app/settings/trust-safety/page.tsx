@@ -2,10 +2,10 @@
 
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
-import { useGetPrivacyPolicyQuery } from "@/redux/features/setting/settingAPI";
+import { useGetTrustSafetyQuery } from "@/redux/features/setting/settingAPI";
 
 export default function PrivacyPolicyPage() {
-  const { data: privacyPolicy } = useGetPrivacyPolicyQuery({});
+  const { data: privacyPolicy } = useGetTrustSafetyQuery({});
 
   return (
     <div className='flex min-h-screen bg-transparent'>
@@ -18,7 +18,7 @@ export default function PrivacyPolicyPage() {
                 className='inline-flex items-center text-primary hover:text-teal-700'
               >
                 <ArrowLeft className='mr-2 h-4 w-4' />
-                <span className='text-xl font-semibold'>Privacy Policy</span>
+                <span className='text-xl font-semibold'>Trust & Safety</span>
               </Link>
 
               <Link
@@ -31,7 +31,7 @@ export default function PrivacyPolicyPage() {
 
             <div className='prose prose-sm max-w-none'>
               <h2 className='text-xl font-semibold text-black mb-4'>
-                Privacy Policy Content
+                Trust & Safety Content
               </h2>
             </div>
 
