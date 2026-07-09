@@ -9,11 +9,11 @@ import Loading from "@/components/loading/Loading";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import {
-  useGetPrivacyPolicyQuery,
-  useSetPrivacyPolicyMutation,
+  useGetTermConditionQuery,
+  useSetTermConditionMutation,
 } from "@/redux/features/setting/settingAPI";
 
-const EditPrivacyPolicy = () => {
+const EditTermsCondition = () => {
   const editorRef = useRef<HTMLDivElement>(null);
   const quillRef = useRef<Quill | null>(null);
   const [content, setContent] = useState<string>("");
@@ -23,10 +23,10 @@ const EditPrivacyPolicy = () => {
     data: privacyPolicy,
     isLoading,
     refetch,
-  } = useGetPrivacyPolicyQuery({});
+  } = useGetTermConditionQuery({});
 
   const [setPrivacyPolicy, { isLoading: isSaving }] =
-    useSetPrivacyPolicyMutation();
+    useSetTermConditionMutation();
 
   useEffect(() => {
     let initialized = false;
@@ -72,8 +72,8 @@ const EditPrivacyPolicy = () => {
       const res = await setPrivacyPolicy({ description: content }).unwrap();
       if (res?.description) {
         toast.success("Terms and Conditions saved successfully!");
-        router.push("/settings/privacy-policy");
-        refetch()
+        router.push("/settings/terms-conditions");
+        refetch();
       } else {
         toast.error("Failed to save.");
       }
@@ -106,4 +106,4 @@ const EditPrivacyPolicy = () => {
   );
 };
 
-export default EditPrivacyPolicy;
+export default EditTermsCondition;

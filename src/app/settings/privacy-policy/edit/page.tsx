@@ -40,7 +40,7 @@ const EditPrivacyPolicy = () => {
       if (editorRef.current && !editorRef.current.querySelector(".ql-editor")) {
         const quill = new Quill(editorRef.current, {
           theme: "snow",
-          placeholder: "Enter your Terms and Conditions...",
+          placeholder: "Enter your privacy policy...",
         });
 
         quillRef.current = quill;
@@ -71,9 +71,9 @@ const EditPrivacyPolicy = () => {
     try {
       const res = await setPrivacyPolicy({ description: content }).unwrap();
       if (res?.description) {
-        toast.success("Terms and Conditions saved successfully!");
+        toast.success("Privacy policy saved successfully!");
         router.push("/settings/privacy-policy");
-        refetch()
+        refetch();
       } else {
         toast.error("Failed to save.");
       }

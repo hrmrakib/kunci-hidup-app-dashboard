@@ -20,10 +20,31 @@ const settingAPI = baseAPI.injectEndpoints({
     getPrivacyPolicy: builder.query({
       query: () => `v1/privacy-policy/privacy-policy/`,
     }),
-
     setPrivacyPolicy: builder.mutation({
       query: (body) => ({
         url: "v1/privacy-policy/privacy-policy/",
+        method: "PUT",
+        body,
+      }),
+    }),
+
+    getTermCondition: builder.query({
+      query: () => `v1/privacy-policy/terms-conditions/`,
+    }),
+    setTermCondition: builder.mutation({
+      query: (body) => ({
+        url: "v1/privacy-policy/terms-conditions/",
+        method: "PUT",
+        body,
+      }),
+    }),
+
+    getTrustSafety: builder.query({
+      query: () => `v1/privacy-policy/trust-safety/`,
+    }),
+    setTrustSafety: builder.mutation({
+      query: (body) => ({
+        url: "v1/privacy-policy/trust-safety/",
         method: "PUT",
         body,
       }),
@@ -36,5 +57,9 @@ export const {
   useUpdateAdminProfileMutation,
   useGetPrivacyPolicyQuery,
   useSetPrivacyPolicyMutation,
+  useGetTermConditionQuery,
+  useSetTermConditionMutation,
+  useGetTrustSafetyQuery,
+  useSetTrustSafetyMutation,
 } = settingAPI;
 export default settingAPI;

@@ -2,10 +2,10 @@
 
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
-import { useGetPrivacyPolicyQuery } from "@/redux/features/setting/settingAPI";
+import { useGetTermConditionQuery } from "@/redux/features/setting/settingAPI";
 
-export default function PrivacyPolicyPage() {
-  const { data: privacyPolicy } = useGetPrivacyPolicyQuery({});
+export default function TermCondition() {
+  const { data: privacyPolicy } = useGetTermConditionQuery({});
 
   return (
     <div className='flex min-h-screen bg-transparent'>
@@ -18,11 +18,11 @@ export default function PrivacyPolicyPage() {
                 className='inline-flex items-center text-primary hover:text-teal-700'
               >
                 <ArrowLeft className='mr-2 h-4 w-4' />
-                <span className='text-xl font-semibold'>Privacy Policy</span>
+                <span className='text-xl font-semibold'>Terms & Condition</span>
               </Link>
 
               <Link
-                href='/settings/privacy-policy/edit'
+                href='/settings/terms-conditions/edit'
                 className='inline-flex items-center text-primary hover:text-teal-700 border border-[#760C2A] rounded-md px-4 py-1.5'
               >
                 <span className='text-xl font-semibold'>Edit</span>
@@ -31,7 +31,7 @@ export default function PrivacyPolicyPage() {
 
             <div className='prose prose-sm max-w-none'>
               <h2 className='text-xl font-semibold text-black mb-4'>
-                Privacy Policy Content
+                Terms & Condition Content
               </h2>
             </div>
 
