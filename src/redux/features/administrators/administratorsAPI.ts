@@ -16,6 +16,7 @@ const AdministratorsAPI = baseAPI.injectEndpoints({
         method: "POST",
         body: data,
       }),
+      invalidatesTags: ["Staffs"],
     }),
 
     updateRole: builder.mutation({
@@ -24,6 +25,7 @@ const AdministratorsAPI = baseAPI.injectEndpoints({
         method: "PATCH",
         body: data,
       }),
+      invalidatesTags: ["Staffs"],
     }),
 
     deleteAdmin: builder.mutation({
@@ -31,6 +33,7 @@ const AdministratorsAPI = baseAPI.injectEndpoints({
         url: `v1/administration/delete/${id}/`,
         method: "DELETE",
       }),
+      invalidatesTags: ["Staffs"],
     }),
   }),
 });

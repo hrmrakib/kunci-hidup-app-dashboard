@@ -25,11 +25,8 @@ interface FormData {
   activationStatus: string;
 }
 
-export default function EditJournalPromptPage({
-  params,
-}: {
-  params: { id: string };
-}) {
+export default function EditJournalPromptPage() {
+  const id = 10;
   const router = useRouter();
   const [formData, setFormData] = useState<FormData>({
     prompt: "",
@@ -67,7 +64,7 @@ export default function EditJournalPromptPage({
       emotion: "Shame",
       activationStatus: "Active",
     });
-  }, [params.id]);
+  }, [id]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -84,7 +81,7 @@ export default function EditJournalPromptPage({
     }
 
     // Here you would typically send the data to your backend
-    console.log("Updating journal prompt:", { id: params.id, ...formData });
+    console.log("Updating journal prompt:", { id: id, ...formData });
 
     // Redirect back to the main page
     router.push("/journal-prompt-manager");
