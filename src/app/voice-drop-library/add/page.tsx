@@ -28,7 +28,7 @@ export default function AddVoicePage() {
     audioFile: null as File | null,
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [createVoiceLibrary] = useCreateVoiceLibraryMutation();
+  const [createVoiceLibrary, { isLoading }] = useCreateVoiceLibraryMutation();
 
   const handleInputChange = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -112,7 +112,7 @@ export default function AddVoicePage() {
         <div className='flex items-center gap-4 mb-8'>
           <Link href='/voices'>
             <Button variant='ghost' size='sm' className='p-2'>
-              <ArrowLeft className='w-4 h-4' />
+              <ArrowLeft className='w-4 h-4 text-black' />
             </Button>
           </Link>
           <h1 className='text-2xl font-semibold text-gray-900'>
@@ -152,11 +152,13 @@ export default function AddVoicePage() {
                   }
                 >
                   <SelectTrigger
-                    className={errors.category ? "border-red-500" : ""}
+                    className={
+                      errors.useCase ? "border-red-500" : "text-black!"
+                    }
                   >
                     <SelectValue
                       placeholder='Select category'
-                      className='!text-black'
+                      className='text-black!'
                     />
                   </SelectTrigger>
                   <SelectContent>
@@ -181,9 +183,14 @@ export default function AddVoicePage() {
                   onValueChange={(value) => handleInputChange("useCase", value)}
                 >
                   <SelectTrigger
-                    className={errors.useCase ? "border-red-500" : ""}
+                    className={
+                      errors.useCase ? "border-red-500" : "text-black!"
+                    }
                   >
-                    <SelectValue placeholder='Select use case' />
+                    <SelectValue
+                      placeholder='Select use case'
+                      className='text-black!'
+                    />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value='comfort'>Comfort</SelectItem>
@@ -273,10 +280,11 @@ export default function AddVoicePage() {
                 Cancel
               </Button>
               <Button
+                disabled={isLoading}
                 type='submit'
                 className='flex-1 bg-[#FEAA39] hover:bg-[#f1951c] text-white'
               >
-                Submit
+                {isLoading ? "Submitting...." : "Submit"}
               </Button>
             </div>
           </form>

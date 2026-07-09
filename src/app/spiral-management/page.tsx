@@ -13,6 +13,7 @@ import {
   useGetAllSprialsQuery,
 } from "@/redux/features/sprial-management/sprialManagementAPI";
 import { toast } from "sonner";
+import GlobalPagination from "@/components/pagination/GlobalPagination";
 
 export interface Day {
   id: number;
@@ -41,34 +42,34 @@ export default function JournalPromptsPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [deleteItemId, setDeleteItemId] = useState<string | number>();
-  const { data: spirals } = useGetAllSprialsQuery(undefined, {
-    refetchOnMountOrArgChange: true,
-  });
-  const [deleteSprial] = useDeleteSprialMutation();
-
-  // ✅ Pagination state
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 1; // only 2 per page
+  const itemsPerPage = 9;
+  const { data: spirals } = useGetAllSprialsQuery(
+    {
+      page: currentPage,
+      page_size: itemsPerPage,
+    },
+    {
+      refetchOnMountOrArgChange: true,
+    },
+  );
 
-  // ✅ Filter spirals based on search
-  const filteredSpirals =
-    spirals?.data?.filter((spiral: Journal) =>
-      spiral.title.toLowerCase().includes(searchTerm.toLowerCase())
-    ) || [];
-
-  // ✅ Pagination math
-  const totalPages = Math.ceil(filteredSpirals.length / itemsPerPage);
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const endIndex = startIndex + itemsPerPage;
-  const paginatedSpirals = filteredSpirals.slice(startIndex, endIndex);
+  const [deleteSprial, { isLoading: isDeleting }] = useDeleteSprialMutation();
+  const totalPages = 2;
 
   const handleDelete = async () => {
-    const res = await deleteSprial(deleteItemId).unwrap();
+    try {
+      const res = await deleteSprial(deleteItemId).unwrap();
 
-    if (res?.data?.success) {
-      toast.success("Spiral deleted successfully!");
+      if (res?.data?.success) {
+        toast.success("Spiral deleted successfully!");
+        setIsDeleteModalOpen(false);
+        setDeleteItemId(0);
+      }
+    } catch (error) {
+      toast.error("Fail to create sprial, try again later!");
+    } finally {
       setIsDeleteModalOpen(false);
-      setDeleteItemId(0);
     }
   };
 
@@ -111,8 +112,8 @@ export default function JournalPromptsPage() {
 
         {/* Spirals Grid */}
         <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
-          {paginatedSpirals.length > 0 &&
-            paginatedSpirals.map((spiral: Journal) => (
+          {spirals?.data?.length > 0 &&
+            spirals?.data?.map((spiral: Journal) => (
               <Card
                 key={spiral?.id}
                 className='bg-[#FFF7EB] border-2 border-orange-200 hover:border-orange-300 transition-colors'
@@ -172,7 +173,7 @@ export default function JournalPromptsPage() {
             ))}
         </div>
 
-        {filteredSpirals.length === 0 && (
+        {spirals?.data?.length === 0 && (
           <div className='text-center py-12'>
             <p className='text-gray-500 text-lg'>
               No spirals found matching your search.
@@ -181,28 +182,12 @@ export default function JournalPromptsPage() {
         )}
 
         {/* ✅ Pagination Controls */}
-        {totalPages > 1 && (
-          <div className='flex justify-center mt-8 gap-2'>
-            <Button
-              variant='outline'
-              disabled={currentPage === 1}
-              onClick={() => setCurrentPage((prev) => prev - 1)}
-              className='!bg-[#FEAA39] hover:bg-[#f5981f] text-black cursor-pointer'
-            >
-              Previous
-            </Button>
-            <span className='px-4 py-2 text-sm font-medium text-gray-700'>
-              Page {currentPage} of {totalPages}
-            </span>
-            <Button
-              variant='outline'
-              disabled={currentPage === totalPages}
-              onClick={() => setCurrentPage((prev) => prev + 1)}
-              className='!bg-[#FEAA39] hover:bg-[#fc9918] text-black cursor-pointer'
-            >
-              Next
-            </Button>
-          </div>
+        {spirals?.data?.length > 0 && (
+          <GlobalPagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={setCurrentPage}
+          />
         )}
 
         {/* Delete Modal */}
@@ -233,11 +218,12 @@ export default function JournalPromptsPage() {
                   Cancel
                 </Button>
                 <Button
+                  disabled={isDeleting}
                   onClick={() => handleDelete()}
                   className='flex-1 bg-[#FF0000] hover:bg-red-600 cursor-pointer text-white flex items-center justify-center gap-2'
                 >
                   <Trash2 className='w-4 h-4' />
-                  Delete Spiral
+                  {isDeleting ? "Deleting ...." : "Delete Spiral"}
                 </Button>
               </div>
             </div>

@@ -8,6 +8,7 @@ const sprialManagementAPI = baseAPI.injectEndpoints({
         url: "v1/spiral-journey/spirals/",
         method: "GET",
       }),
+      providesTags: ["Spirals"],
     }),
 
     getSprial: builder.query({
@@ -15,6 +16,7 @@ const sprialManagementAPI = baseAPI.injectEndpoints({
         url: `v1/spiral-journey/spirals/${id}/`,
         method: "GET",
       }),
+      providesTags: ["Spirals"],
     }),
 
     createSpiral: builder.mutation({
@@ -23,6 +25,7 @@ const sprialManagementAPI = baseAPI.injectEndpoints({
         method: "POST",
         body: data,
       }),
+      invalidatesTags: ["Spirals"],
     }),
 
     updateSprial: builder.mutation({
@@ -31,6 +34,7 @@ const sprialManagementAPI = baseAPI.injectEndpoints({
         method: "PUT",
         body: data,
       }),
+      invalidatesTags: ["Spirals"],
     }),
 
     updateSpiralDay: builder.mutation<
@@ -42,6 +46,7 @@ const sprialManagementAPI = baseAPI.injectEndpoints({
         method: "PATCH",
         body: data,
       }),
+      invalidatesTags: ["Spirals"],
     }),
 
     deleteSprial: builder.mutation({
@@ -49,6 +54,7 @@ const sprialManagementAPI = baseAPI.injectEndpoints({
         url: `v1/spiral-journey/spirals/${id}/`,
         method: "DELETE",
       }),
+      invalidatesTags: ["Spirals"],
     }),
   }),
 });

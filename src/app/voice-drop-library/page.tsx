@@ -53,7 +53,7 @@ export default function VoicesPage() {
     undefined,
     {
       refetchOnMountOrArgChange: true,
-    }
+    },
   );
   const [changeStatus, { isLoading: isChangeStatusLoading }] =
     useChangeStatusMutation();
@@ -81,16 +81,16 @@ export default function VoicesPage() {
         [voice.title, voice.category, voice.emotion, voice.useCase]
           .join(" ")
           .toLowerCase()
-          .includes(searchTerm.toLowerCase())
+          .includes(searchTerm.toLowerCase()),
       ),
-    [voices, searchTerm]
+    [voices, searchTerm],
   );
 
   const totalPages = Math.ceil(filteredVoices.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const paginatedVoices = filteredVoices.slice(
     startIndex,
-    startIndex + itemsPerPage
+    startIndex + itemsPerPage,
   );
 
   const handleActionClick = (voice: Voice) => {
@@ -99,27 +99,34 @@ export default function VoicesPage() {
   };
 
   const handleDeleteVoice = async (voiceId: string) => {
-    const res = await deleteVoiceLibrary(voiceId).unwrap();
+    try {
+      const res = await deleteVoiceLibrary(voiceId).unwrap();
 
-    if (res?.success) {
-      refetch();
-      toast.success("Voice deleted successfully!");
-      setIsActionModalOpen(false);
-      setSelectedVoice(null);
+      if (res?.success) {
+        refetch();
+        toast.success("Voice deleted successfully!");
+        setIsActionModalOpen(false);
+        setSelectedVoice(null);
+      }
+    } catch (error) {
+      toast.error("Voice deleting fail!");
     }
   };
 
   const handleActivationToggle = async (voiceId: string, isActive: boolean) => {
-    const res = await changeStatus(voiceId).unwrap();
-    console.log(res);
+    try {
+      const res = await changeStatus(voiceId).unwrap();
 
-    if (res?.success) {
-      refetch();
-      toast.success("Status updated successfully!");
-      setSelectedVoice((prev) =>
-        prev ? { ...prev, status: isActive ? "active" : "inactive" } : null
-      );
-      setIsActionModalOpen(false);
+      if (res?.success) {
+        refetch();
+        toast.success("Status updated successfully!");
+        setSelectedVoice((prev) =>
+          prev ? { ...prev, status: isActive ? "active" : "inactive" } : null,
+        );
+        setIsActionModalOpen(false);
+      }
+    } catch (error) {
+      toast.error("Voice deleting fail!");
     }
   };
 
@@ -141,7 +148,7 @@ export default function VoicesPage() {
         currentPage,
         currentPage + 1,
         "...",
-        totalPages
+        totalPages,
       );
     }
 
@@ -367,7 +374,7 @@ export default function VoicesPage() {
                       className='bg-red-700 hover:bg-red-800 cursor-pointer'
                     >
                       <Trash2 className='w-4 h-4 mr-2' />
-                      Delete
+                      {isDeleteLoading ? "Deleting ..." : "Delete"}
                     </Button>
                   </div>
                 </div>
