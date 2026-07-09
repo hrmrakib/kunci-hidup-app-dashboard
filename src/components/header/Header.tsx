@@ -5,13 +5,10 @@ import { Button } from "../ui/button";
 import { Bell } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { usePathname } from "next/navigation";
+import { useAuth } from "@/hooks/useAuth";
 
 const Header = () => {
-  const [admin, setAdmin] = useState({
-    name: "Daissy",
-    role: "Super admin",
-    image: "/admin.jpeg",
-  });
+  const { user } = useAuth();
 
   const pathname = usePathname();
 
@@ -31,7 +28,7 @@ const Header = () => {
         <div className='flex items-center justify-between py-6'>
           <div>
             <h1 className='md:text-2xl font-bold text-gray-900'>
-              Welcome, {admin?.name}
+              Welcome, {user?.full_name}
             </h1>
             <p className='text-sm md:text-base text-gray-600 mt-1'>
               Have a nice day
@@ -49,9 +46,9 @@ const Header = () => {
               </Avatar>
               <div className='hidden sm:block'>
                 <p className='text-base font-medium text-[#333338]'>
-                  {admin?.name}
+                  {user?.full_name}
                 </p>
-                <p className='text-sm text-[#606060]'>{admin?.role}</p>
+                <p className='text-sm text-[#606060] uppercase'>{user?.role}</p>
               </div>
             </div>
           </div>

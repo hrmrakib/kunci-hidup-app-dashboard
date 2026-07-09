@@ -3,10 +3,19 @@
 import Link from "next/link";
 import Image from "next/image";
 import { ArrowLeft, Edit } from "lucide-react";
-import { useGetAdminProfileQuery } from "../../../redux/features/setting/settingAPI";
+import { getImageURL } from "@/utils/getImageURL";
+import { useAuth } from "@/hooks/useAuth";
 
 export default function PersonalInformationPage() {
-  const { data: admin } = useGetAdminProfileQuery({});
+  const { user, profileLoading } = useAuth();
+
+  if (profileLoading) {
+    return (
+      <div className='w-full min-h-[70vh] flex items-center justify-center text-black'>
+        Loading ......
+      </div>
+    );
+  }
 
   return (
     <div className='flex min-h-screen bg-[#FFFFFF]'>
@@ -37,18 +46,18 @@ export default function PersonalInformationPage() {
             <div className='bg-[#ffffff93] rounded-md p-6'>
               <div className='flex flex-col md:flex-row gap-8 mb-6'>
                 {/* Profile Photo Section */}
-                <div className='w-full md:w-64 flex flex-col items-center border border-gray-600 rounded-md px-6 py-10'>
-                  <div className='w-32 h-32 rounded-full overflow-hidden relative mb-3'>
+                <div className='w-full md:w-64 flex flex-col items-center rounded-md px-6 py-10'>
+                  <div className='w-32 h-32 rounded-full overflow-hidden relative mb-3 border-2 border-gray-600'>
                     <Image
-                      src={`${process.env.NEXT_PUBLIC_API_URL}${admin?.data?.profile_pic}`}
-                      alt={admin?.data?.full_name}
+                      src={`${getImageURL(user?.profile_pic)}`}
+                      alt={user!.full_name}
                       fill
                       className='object-cover'
                     />
                   </div>
                   <span className='text-base text-primary'>Profile</span>
                   <span className='font-medium text-lg text-primary'>
-                    Admin
+                    {user!.full_name}
                   </span>
                 </div>
 
@@ -57,7 +66,7 @@ export default function PersonalInformationPage() {
                   <div className='flex flex-col gap-1'>
                     <div className='text-lg font-medium text-primary'>Name</div>
                     <div className='text-lg text-primary px-2 py-3 rounded-md border border-gray-500'>
-                      {admin?.data?.full_name}
+                      {user?.full_name}
                     </div>
                   </div>
 
@@ -66,7 +75,7 @@ export default function PersonalInformationPage() {
                       Email
                     </div>
                     <div className='text-lg text-primary px-2 py-3 rounded-md border border-gray-500'>
-                      {admin?.data?.email}
+                      {user?.email}
                     </div>
                   </div>
 
@@ -75,8 +84,8 @@ export default function PersonalInformationPage() {
                       Phone Number
                     </div>
                     <div className='text-lg text-primary px-2 py-3 rounded-md border border-gray-500'>
-                      {admin?.data?.contanct_no
-                        ? admin?.data?.contanct_no
+                      {user?.contanct_no
+                        ? user?.contanct_no
                         : "No number set yet"}
                     </div>
                   </div>

@@ -126,7 +126,7 @@ export default function DashboardSidebar() {
                 }
               />
 
-              <NavItem
+              {/* <NavItem
                 href='/journal-pro-manager'
                 icon={Settings}
                 label='Journal Pro. Manager'
@@ -134,7 +134,7 @@ export default function DashboardSidebar() {
                   pathname === "/journal-pro-manager" ||
                   pathname.startsWith("/journal-pro-manager/")
                 }
-              />
+              /> */}
 
               <NavItem
                 href='/settings'
