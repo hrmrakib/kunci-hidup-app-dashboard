@@ -13,6 +13,8 @@ import {
   useGetAdminProfileQuery,
   useUpdateAdminProfileMutation,
 } from "@/redux/features/setting/settingAPI";
+import { toast } from "sonner";
+import { getImageURL } from "@/utils/getImageURL";
 
 export default function PersonalInformationEditPage() {
   const [formData, setFormData] = useState({
@@ -65,19 +67,23 @@ export default function PersonalInformationEditPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const formDataToSubmit = new FormData();
+    try {
+      const formDataToSubmit = new FormData();
 
-    formDataToSubmit.append("full_name", formData.name);
-    formDataToSubmit.append("email", formData.email);
+      formDataToSubmit.append("full_name", formData.name);
+      formDataToSubmit.append("email", formData.email);
 
-    if (profileImage instanceof File) {
-      formDataToSubmit.append("profile_pic", profileImage);
-    }
+      if (profileImage instanceof File) {
+        formDataToSubmit.append("profile_pic", profileImage);
+      }
 
-    const res = await updateProfile(formDataToSubmit);
+      const res = await updateProfile(formDataToSubmit);
 
-    if (res?.data?.success) {
-      router.push("/settings/personal-information");
+      if (res?.data?.success) {
+        router.push("/settings/personal-information");
+      }
+    } catch (error) {
+      toast.error("Profile update failed!");
     }
   };
 
@@ -106,7 +112,7 @@ export default function PersonalInformationEditPage() {
                     className='relative mb-4 cursor-pointer'
                     onClick={handleImageClick}
                   >
-                    <div className='w-32 h-32 rounded-full overflow-hidden relative'>
+                    <div className='w-32 h-32 rounded-full overflow-hidden relative border border-gray-600'>
                       {imagePreview ? (
                         <Image
                           src={imagePreview}
@@ -117,8 +123,8 @@ export default function PersonalInformationEditPage() {
                         />
                       ) : (
                         <Image
-                          src={`${process.env.NEXT_PUBLIC_API_URL}${admin?.data?.profile_pic}`}
-                          alt='Profile'
+                          src={`${getImageURL(admin?.data?.profile_pic)}`}
+                          alt={admin?.data?.full_name}
                           fill
                           className='object-cover'
                           sizes='128px'
@@ -175,29 +181,6 @@ export default function PersonalInformationEditPage() {
                       onChange={handleChange}
                       className='w-full text-lg text-primary'
                     />
-                  </div>
-
-                  <div className='space-y-2'>
-                    {/* <Label
-                      htmlFor='phone'
-                      className='text-lg font-medium text-primary'
-                    >
-                      Phone Number
-                    </Label> */}
-                    {/* <PhoneInput
-                      country={"us"}
-                      value={formData.phone}
-                      onChange={(phone) => setFormData({ ...formData, phone })}
-                      containerClass='w-full'
-                      inputClass='w-full h-[100px] p-2 border border-[#760C2A] rounded-md text-5xl font-semibold text-[#760C2A]'
-                      buttonClass='border-[#760C2A]'
-                      inputStyle={{
-                        width: "100%",
-                        height: "40px",
-                        border: "1px solid #760C2A",
-                      }}
-                      placeholder='Enter phone number'
-                    /> */}
                   </div>
                 </div>
               </div>

@@ -47,7 +47,7 @@ export default function PersonalInformationPage() {
               <div className='flex flex-col md:flex-row gap-8 mb-6'>
                 {/* Profile Photo Section */}
                 <div className='w-full md:w-64 flex flex-col items-center rounded-md px-6 py-10'>
-                  <div className='w-32 h-32 rounded-full overflow-hidden relative mb-3 border-2 border-gray-600'>
+                  <div className='w-32 h-32 rounded-full overflow-hidden relative mb-3 border border-gray-600'>
                     <Image
                       src={`${getImageURL(user?.profile_pic)}`}
                       alt={user!.full_name}
