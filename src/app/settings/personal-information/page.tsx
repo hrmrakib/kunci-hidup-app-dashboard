@@ -50,7 +50,7 @@ export default function PersonalInformationPage() {
                   <div className='w-32 h-32 rounded-full overflow-hidden relative mb-3 border border-gray-600'>
                     <Image
                       src={`${getImageURL(user?.profile_pic)}`}
-                      alt={user!.full_name}
+                      alt={user?.full_name as string}
                       fill
                       className='object-cover'
                     />
