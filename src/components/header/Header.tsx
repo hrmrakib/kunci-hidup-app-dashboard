@@ -6,6 +6,7 @@ import { Bell } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { usePathname } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
+import { getImageURL } from "@/utils/getImageURL";
 
 const Header = () => {
   const { user } = useAuth();
@@ -35,14 +36,10 @@ const Header = () => {
             </p>
           </div>
           <div className='flex items-center gap-4'>
-            <Button variant='ghost' size='icon' className='relative'>
-              <Bell className='h-5 w-5' />
-              <span className='absolute -top-1 -right-1 h-3 w-3 bg-red-500 rounded-full'></span>
-            </Button>
             <div className='flex items-center gap-3'>
               <Avatar className='h-10 w-10'>
-                <AvatarImage src='/admin.jpeg' alt='Daissy' />
-                <AvatarFallback>D</AvatarFallback>
+                <AvatarImage src={getImageURL(user?.profile_pic)} alt={user?.full_name || 'Profile'} />
+                <AvatarFallback>{user?.full_name?.charAt(0) || 'U'}</AvatarFallback>
               </Avatar>
               <div className='hidden sm:block'>
                 <p className='text-base font-medium text-[#333338]'>

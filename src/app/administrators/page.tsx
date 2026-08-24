@@ -18,7 +18,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
-import { Edit, Trash2, X, Plus, Eye, EyeOff } from "lucide-react";
+import { Edit, Trash2, X, Plus, Eye, EyeOff, Shield, UserCog, AlertTriangle } from "lucide-react";
 import {
   useCreateAdminMutation,
   useDeleteAdminMutation,
@@ -179,16 +179,24 @@ export default function AdministratorsPage() {
   };
 
   return (
-    <div className='lg:bg-gray-50 min-h-screen pt-5'>
+    <div className='min-h-screen bg-transparent pt-5'>
       <div className='w-full'>
         {/* Header */}
-        <div className='flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 px-6'>
-          <h1 className='text-2xl font-semibold text-gray-900'>
-            Administrators
-          </h1>
+        <div className='flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8'>
+          <div className='flex items-center gap-3'>
+            <div className='flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-[#315D62] to-[#27484c] shadow-lg shadow-[#315D62]/20'>
+              <Shield className='h-5 w-5 text-white' />
+            </div>
+            <div>
+              <h1 className='text-2xl font-bold text-gray-900 tracking-tight'>
+                Administrators
+              </h1>
+              <p className='text-sm text-gray-500'>Manage team roles and permissions</p>
+            </div>
+          </div>
           <Button
             onClick={handleAddAdmin}
-            className='bg-[#006699] hover:bg-[#006699] text-white flex items-center gap-2 cursor-pointer'
+            className='bg-gradient-to-r from-[#FEAA39] to-[#e09530] hover:from-[#e09530] hover:to-[#d18e29] text-white font-medium rounded-xl shadow-md shadow-[#FEAA39]/20 flex items-center gap-2 cursor-pointer transition-all duration-200 px-5 h-11'
           >
             <Plus className='w-4 h-4' />
             Add New Administrator
@@ -196,114 +204,176 @@ export default function AdministratorsPage() {
         </div>
 
         {/* Desktop Table */}
-        <div className='w-full hidden md:block bg-white rounded-lg shadow-sm overflow-hidden'>
-          <div className='bg-table-header-bg text-white'>
-            <div className='grid grid-cols-5 gap-4 p-4 font-medium'>
-              <div className='text-center text-sm font-medium text-table-header-color'>
-                Sl no.
-              </div>
+        <div className='w-full hidden md:block overflow-hidden rounded-2xl bg-white shadow-sm border border-gray-100'>
+          <table className='w-full'>
+            <thead>
+              <tr className='bg-gradient-to-r from-[#FEAA39] to-[#e09530]'>
+                <th className='px-6 py-4 text-center text-sm font-semibold text-white'>
+                  Sl no.
+                </th>
+                <th className='px-6 py-4 text-left text-sm font-semibold text-white'>
+                  Name
+                </th>
+                <th className='px-6 py-4 text-left text-sm font-semibold text-white'>
+                  Email
+                </th>
+                <th className='px-6 py-4 text-center text-sm font-semibold text-white'>
+                  Access Role
+                </th>
+                <th className='px-6 py-4 text-center text-sm font-semibold text-white'>
+                  Action
+                </th>
+              </tr>
+            </thead>
+            <tbody className='divide-y divide-gray-100'>
+              {isLoading
+                ? Array.from({ length: 6 }).map((_, index) => (
+                    <tr key={index} className='animate-pulse'>
+                      <td className='px-6 py-4'><Skeleton className='h-7 w-7 rounded-lg mx-auto' /></td>
+                      <td className='px-6 py-4'><Skeleton className='h-5 w-36 rounded-md' /></td>
+                      <td className='px-6 py-4'><Skeleton className='h-5 w-44 rounded-md' /></td>
+                      <td className='px-6 py-4'><Skeleton className='h-6 w-24 rounded-full mx-auto' /></td>
+                      <td className='px-6 py-4'>
+                        <div className='flex items-center justify-center gap-2'>
+                          <Skeleton className='h-8 w-8 rounded-lg' />
+                          <Skeleton className='h-8 w-8 rounded-lg' />
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                : null}
 
-              <div className='text-center text-sm font-medium text-table-header-color'>
-                Name
-              </div>
-              <div className='text-center text-sm font-medium text-table-header-color'>
-                Email
-              </div>
+              {staffs?.data?.map((admin: Staff, index: number) => (
+                <tr
+                  key={admin?.id}
+                  className='group hover:bg-[#FFF7EB]/60 transition-colors duration-200'
+                >
+                  <td className='px-6 py-4 text-center'>
+                    <span className='inline-flex h-7 w-7 items-center justify-center rounded-lg bg-gray-100 text-xs font-semibold text-gray-600 group-hover:bg-[#FEAA39]/10 group-hover:text-[#FEAA39] transition-colors'>
+                      {(currentPage - 1) * itemsPerPage + index + 1}
+                    </span>
+                  </td>
+                  <td className='px-6 py-4'>
+                    <div className='flex items-center gap-3'>
+                      <div className='flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-[#315D62]/10 to-[#27484c]/10 text-[#315D62] text-sm font-bold shrink-0'>
+                        {admin?.full_name?.split(" ").map((n) => n[0]).join("").slice(0, 2)}
+                      </div>
+                      <span className='text-sm font-semibold text-gray-800'>
+                        {admin?.full_name}
+                      </span>
+                    </div>
+                  </td>
+                  <td className='px-6 py-4'>
+                    <span className='text-sm text-gray-600'>{admin?.email}</span>
+                  </td>
+                  <td className='px-6 py-4 text-center'>
+                    <span
+                      className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold transition-colors ${
+                        admin?.role === "superadmin"
+                          ? "bg-gradient-to-r from-blue-50 to-indigo-50 text-blue-700 ring-1 ring-blue-200/60"
+                          : "bg-gradient-to-r from-emerald-50 to-green-50 text-emerald-700 ring-1 ring-emerald-200/60"
+                      }`}
+                    >
+                      {admin?.role === "superadmin" ? (
+                        <Shield className='w-3 h-3' />
+                      ) : (
+                        <UserCog className='w-3 h-3' />
+                      )}
+                      {admin?.role === "superadmin" ? "Super Admin" : "Staff"}
+                    </span>
+                  </td>
+                  <td className='px-6 py-4'>
+                    <div className='flex items-center justify-center gap-1'>
+                      <Button
+                        variant='ghost'
+                        size='sm'
+                        onClick={() => handleEditAdmin(admin)}
+                        className='h-9 w-9 p-0 rounded-lg text-gray-400 hover:text-[#FEAA39] hover:bg-[#FEAA39]/10 transition-all duration-200'
+                      >
+                        <Edit className='w-4 h-4' />
+                      </Button>
+                      <Button
+                        variant='ghost'
+                        size='sm'
+                        onClick={() => handleDeleteAdmin(admin?.id)}
+                        className='h-9 w-9 p-0 rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 transition-all duration-200'
+                      >
+                        <Trash2 className='w-4 h-4' />
+                      </Button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
 
-              <div className='text-center text-sm font-medium text-table-header-color'>
-                Has to Access
-              </div>
-              <div className='text-center text-sm font-medium text-table-header-color'>
-                Action
-              </div>
-            </div>
-          </div>
-
-          <div className='divide-y divide-gray-200'>
-            {isLoading
-              ? Array.from({ length: 10 }).map((_, index) => (
-                  <div
-                    key={index}
-                    className='grid grid-cols-6 gap-4 p-4 items-center'
-                  >
-                    <Skeleton className='h-4 w-[250px]' />
-                    <Skeleton className='h-4 w-[250px]' />
-                    <Skeleton className='h-4 w-[250px]' />
-                    <Skeleton className='h-4 w-[250px]' />
-                    <Skeleton className='h-4 w-[250px]' />
-                    <Skeleton className='h-4 w-[250px]' />
-                    <Skeleton className='h-4 w-[250px]' />
-                    <Skeleton className='h-4 w-[250px]' />
-                    <Skeleton className='h-4 w-[250px]' />
-                  </div>
-                ))
-              : null}
-
-            {staffs?.data?.map((admin: Staff) => (
-              <div
-                key={admin?.id}
-                className='grid grid-cols-5 gap-4 p-4 items-center hover:bg-gray-50'
-              >
-                <div className='text-lg text-center  text-gray-600'>
-                  {admin.id}
-                </div>
-
-                <div className='font-medium text-center text-gray-900'>
-                  {admin?.full_name}
-                </div>
-                <div className='text-gray-600 text-center'>{admin?.email}</div>
-                <div className='text-center'>
-                  <span
-                    className={`px-2 py-1 rounded text-sm font-medium ${
-                      admin?.role === "superadmin"
-                        ? "text-blue-600 bg-blue-50"
-                        : "text-green-600 bg-green-50"
-                    }`}
-                  >
-                    {admin?.role}
-                  </span>
-                </div>
-                <div className='flex items-center justify-center gap-2'>
-                  <Button
-                    variant='ghost'
-                    size='sm'
-                    onClick={() => handleEditAdmin(admin)}
-                    className='text-gray-600 hover:text-gray-900'
-                  >
-                    <Edit className='w-4 h-4' />
-                  </Button>
-                  <Button
-                    variant='ghost'
-                    size='sm'
-                    onClick={() => handleDeleteAdmin(admin?.id)}
-                    className='text-gray-600 hover:text-red-600'
-                  >
-                    <Trash2 className='w-4 h-4' />
-                  </Button>
-                </div>
-              </div>
-            ))}
-          </div>
+              {!isLoading && (!staffs?.data || staffs.data.length === 0) && (
+                <tr>
+                  <td colSpan={5} className='px-6 py-16 text-center'>
+                    <div className='flex flex-col items-center gap-3'>
+                      <div className='flex h-14 w-14 items-center justify-center rounded-full bg-gray-100'>
+                        <Shield className='h-7 w-7 text-gray-400' />
+                      </div>
+                      <p className='text-sm font-medium text-gray-500'>No administrators found</p>
+                      <p className='text-xs text-gray-400'>Add a new administrator to get started</p>
+                    </div>
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
         </div>
 
         {/* Mobile Cards */}
-        <div className='md:hidden space-y-4'>
-          {staffs?.data?.map((admin: Staff) => (
-            <div key={admin.id} className='bg-white rounded-lg shadow-sm p-4'>
-              <div className='flex items-center justify-between mb-3'>
-                <div className='flex items-center gap-3'>
-                  <div>
-                    <div className='font-medium text-gray-900'>
-                      {admin?.full_name}
+        <div className='md:hidden space-y-3'>
+          {isLoading
+            ? Array.from({ length: 4 }).map((_, i) => (
+                <div key={i} className='bg-white rounded-xl p-4 shadow-sm border border-gray-100 animate-pulse'>
+                  <div className='flex items-center gap-3 mb-3'>
+                    <Skeleton className='h-10 w-10 rounded-full' />
+                    <div className='flex-1 space-y-2'>
+                      <Skeleton className='h-4 w-32 rounded-md' />
+                      <Skeleton className='h-3 w-24 rounded-md' />
                     </div>
                   </div>
+                  <Skeleton className='h-3 w-full rounded-md' />
                 </div>
-                <div className='flex items-center gap-2'>
+              ))
+            : null}
+          {staffs?.data?.map((admin: Staff) => (
+            <div
+              key={admin.id}
+              className='bg-white rounded-xl shadow-sm border border-gray-100 p-4 hover:shadow-md transition-shadow duration-200'
+            >
+              <div className='flex items-center justify-between mb-3'>
+                <div className='flex items-center gap-3'>
+                  <div className='flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-[#315D62]/10 to-[#27484c]/10 text-[#315D62] text-sm font-bold'>
+                    {admin?.full_name?.split(" ").map((n) => n[0]).join("").slice(0, 2)}
+                  </div>
+                  <div>
+                    <div className='font-semibold text-gray-900'>
+                      {admin?.full_name}
+                    </div>
+                    <span
+                      className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold mt-1 ${
+                        admin.role === "superadmin"
+                          ? "bg-blue-50 text-blue-700"
+                          : "bg-emerald-50 text-emerald-700"
+                      }`}
+                    >
+                      {admin.role === "superadmin" ? (
+                        <Shield className='w-2.5 h-2.5' />
+                      ) : (
+                        <UserCog className='w-2.5 h-2.5' />
+                      )}
+                      {admin.role === "superadmin" ? "Super Admin" : "Staff"}
+                    </span>
+                  </div>
+                </div>
+                <div className='flex items-center gap-1'>
                   <Button
                     variant='ghost'
                     size='sm'
                     onClick={() => handleEditAdmin(admin)}
-                    className='text-gray-600'
+                    className='h-8 w-8 p-0 rounded-lg text-gray-400 hover:text-[#FEAA39] hover:bg-[#FEAA39]/10'
                   >
                     <Edit className='w-4 h-4' />
                   </Button>
@@ -311,30 +381,17 @@ export default function AdministratorsPage() {
                     variant='ghost'
                     size='sm'
                     onClick={() => handleDeleteAdmin(admin?.id)}
-                    className='text-gray-600'
+                    className='h-8 w-8 p-0 rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50'
                   >
                     <Trash2 className='w-4 h-4' />
                   </Button>
                 </div>
               </div>
 
-              <div className='space-y-2 text-sm'>
+              <div className='space-y-1.5 text-sm pl-[52px]'>
                 <div className='flex justify-between'>
-                  <span className='text-gray-500'>Email:</span>
-                  <span className='text-gray-900'>{admin.email}</span>
-                </div>
-
-                <div className='flex justify-between'>
-                  <span className='text-gray-500'>Role:</span>
-                  <span
-                    className={`px-2 py-1 rounded text-xs font-medium ${
-                      admin.role === "superadmin"
-                        ? "text-blue-600 bg-blue-50"
-                        : "text-green-600 bg-green-50"
-                    }`}
-                  >
-                    {admin.role}
-                  </span>
+                  <span className='text-gray-400 text-xs'>Email</span>
+                  <span className='text-gray-700 text-xs'>{admin.email}</span>
                 </div>
               </div>
             </div>
@@ -350,28 +407,30 @@ export default function AdministratorsPage() {
 
         {/* Add Administrator Modal */}
         <Dialog open={isAddModalOpen} onOpenChange={setIsAddModalOpen}>
-          <DialogContent className='sm:max-w-md'>
-            <DialogHeader>
-              <DialogTitle className='text-2xl font-semibold text-center text-black'>
-                Add New Administrator
-              </DialogTitle>
+          <DialogContent className='sm:max-w-md rounded-2xl'>
+            <DialogHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
+              <div className='flex items-center gap-3'>
+                <div className='flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-[#FEAA39] to-[#d18e29] shadow-md shadow-[#FEAA39]/20'>
+                  <Plus className='h-5 w-5 text-white' />
+                </div>
+                <DialogTitle className='text-lg font-bold text-gray-900'>
+                  Add New Administrator
+                </DialogTitle>
+              </div>
               <Button
                 variant='ghost'
                 size='sm'
                 onClick={() => setIsAddModalOpen(false)}
-                className='absolute right-4 top-4 text-white rounded-full w-8 h-8 p-0'
+                className='h-8 w-8 p-0 rounded-lg hover:bg-gray-100'
               >
                 <X className='w-4 h-4' />
               </Button>
             </DialogHeader>
 
-            <div className='space-y-4 py-4'>
-              <div className='space-y-2'>
-                <Label
-                  htmlFor='add-name'
-                  className='text-xl font-semibold text-[#000000]'
-                >
-                  Name:
+            <div className='space-y-4 pt-2'>
+              <div className='space-y-1.5'>
+                <Label htmlFor='add-name' className='text-sm font-medium text-gray-700'>
+                  Full Name
                 </Label>
                 <Input
                   id='add-name'
@@ -379,17 +438,14 @@ export default function AdministratorsPage() {
                   onChange={(e) =>
                     setFormData({ ...formData, name: e.target.value })
                   }
-                  className='bg-gray-100 text-[#000000]'
-                  placeholder='Enter name'
+                  className='bg-gray-50 border-gray-200 rounded-xl h-11 text-gray-800 placeholder:text-gray-400 focus:border-[#FEAA39] focus:ring-[#FEAA39]/20'
+                  placeholder='Enter full name'
                 />
               </div>
 
-              <div className='space-y-2'>
-                <Label
-                  htmlFor='user-name'
-                  className='text-xl font-semibold text-[#000000]'
-                >
-                  Username:
+              <div className='space-y-1.5'>
+                <Label htmlFor='user-name' className='text-sm font-medium text-gray-700'>
+                  Username
                 </Label>
                 <Input
                   id='user-name'
@@ -397,17 +453,14 @@ export default function AdministratorsPage() {
                   onChange={(e) =>
                     setFormData({ ...formData, username: e.target.value })
                   }
-                  className='bg-gray-100 text-[#000000]'
+                  className='bg-gray-50 border-gray-200 rounded-xl h-11 text-gray-800 placeholder:text-gray-400 focus:border-[#FEAA39] focus:ring-[#FEAA39]/20'
                   placeholder='Enter username'
                 />
               </div>
 
-              <div className='space-y-2'>
-                <Label
-                  htmlFor='add-email'
-                  className='text-xl font-semibold text-[#000000]'
-                >
-                  Email:
+              <div className='space-y-1.5'>
+                <Label htmlFor='add-email' className='text-sm font-medium text-gray-700'>
+                  Email Address
                 </Label>
                 <Input
                   id='add-email'
@@ -416,62 +469,58 @@ export default function AdministratorsPage() {
                   onChange={(e) =>
                     setFormData({ ...formData, email: e.target.value })
                   }
-                  className='bg-gray-100 text-[#000000]'
-                  placeholder='Enter email'
+                  className='bg-gray-50 border-gray-200 rounded-xl h-11 text-gray-800 placeholder:text-gray-400 focus:border-[#FEAA39] focus:ring-[#FEAA39]/20'
+                  placeholder='Enter email address'
                 />
               </div>
 
-              <div className='relative space-y-2'>
-                <Label
-                  htmlFor='add-phone'
-                  className='text-xl font-semibold text-[#000000]'
-                >
-                  Password:
+              <div className='space-y-1.5'>
+                <Label htmlFor='add-phone' className='text-sm font-medium text-gray-700'>
+                  Password
                 </Label>
-                <Input
-                  id='add-phone'
-                  type={showPassword ? "text" : "password"}
-                  value={formData.password}
-                  onChange={(e) =>
-                    setFormData({ ...formData, password: e.target.value })
-                  }
-                  className='bg-gray-100 text-[#000000]'
-                  placeholder='Enter phone number'
-                />
-                <div
-                  className='absolute right-2 top-[75%] transform -translate-y-1/2'
-                  onClick={() => setShowPassword(!showPassword)}
-                >
-                  {showPassword ? (
-                    <EyeOff className='w-4 h-4 text-black' />
-                  ) : (
-                    <Eye className='w-4 h-4 text-black' />
-                  )}
+                <div className='relative'>
+                  <Input
+                    id='add-phone'
+                    type={showPassword ? "text" : "password"}
+                    value={formData.password}
+                    onChange={(e) =>
+                      setFormData({ ...formData, password: e.target.value })
+                    }
+                    className='bg-gray-50 border-gray-200 rounded-xl h-11 text-gray-800 placeholder:text-gray-400 pr-10 focus:border-[#FEAA39] focus:ring-[#FEAA39]/20'
+                    placeholder='Enter password'
+                  />
+                  <button
+                    type='button'
+                    className='absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors'
+                    onClick={() => setShowPassword(!showPassword)}
+                  >
+                    {showPassword ? (
+                      <EyeOff className='w-4 h-4' />
+                    ) : (
+                      <Eye className='w-4 h-4' />
+                    )}
+                  </button>
                 </div>
               </div>
 
-              <div className='space-y-2 flex items-center justify-between'>
-                <Label
-                  htmlFor='add-role'
-                  className='text-xl font-semibold text-[#000000]'
-                >
-                  Role:
+              <div className='space-y-1.5'>
+                <Label htmlFor='add-role' className='text-sm font-medium text-gray-700'>
+                  Role
                 </Label>
                 <Select
-                  // value={formData.role}
                   defaultValue='staff'
                   onValueChange={(value: "staff" | "superadmin") =>
                     setFormData({ ...formData, role: value })
                   }
                 >
-                  <SelectTrigger className='bg-gray-100 text-black border-2'>
+                  <SelectTrigger className='bg-gray-50 border-gray-200 rounded-xl h-11 text-gray-800'>
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value='staff' className='text-black'>
+                    <SelectItem value='staff' className='text-gray-800'>
                       Staff
                     </SelectItem>
-                    <SelectItem value='superadmin' className='text-black'>
+                    <SelectItem value='superadmin' className='text-gray-800'>
                       Super Admin
                     </SelectItem>
                   </SelectContent>
@@ -483,15 +532,15 @@ export default function AdministratorsPage() {
               <Button
                 variant='outline'
                 onClick={() => setIsAddModalOpen(false)}
-                className='flex-1 bg-[#FEAA39] hover:bg-[#FEAA39] text-[#FEAA39] border !border-[#FEAA39] hover:!border-[#000000] cursor-pointer'
+                className='flex-1 h-11 rounded-xl border-gray-200 text-gray-700 hover:bg-gray-50 font-medium cursor-pointer transition-all duration-200'
               >
                 Cancel
               </Button>
               <Button
                 onClick={handleCreateAdmin}
-                className='flex-1 bg-[#FEAA39] hover:bg-[#FEAA39] text-white cursor-pointer'
+                className='flex-1 h-11 rounded-xl bg-gradient-to-r from-[#FEAA39] to-[#e09530] hover:from-[#e09530] hover:to-[#d18e29] text-white font-medium cursor-pointer shadow-md shadow-[#FEAA39]/20 transition-all duration-200'
               >
-                Create
+                Create Administrator
               </Button>
             </div>
           </DialogContent>
@@ -499,28 +548,30 @@ export default function AdministratorsPage() {
 
         {/* Edit Administrator Modal */}
         <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
-          <DialogContent className='sm:max-w-md'>
-            <DialogHeader>
-              <DialogTitle className='text-2xl font-semibold text-center text-black'>
-                Edit Administrator
-              </DialogTitle>
+          <DialogContent className='sm:max-w-md rounded-2xl'>
+            <DialogHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
+              <div className='flex items-center gap-3'>
+                <div className='flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-[#315D62] to-[#27484c] shadow-md'>
+                  <Edit className='h-5 w-5 text-white' />
+                </div>
+                <DialogTitle className='text-lg font-bold text-gray-900'>
+                  Edit Administrator
+                </DialogTitle>
+              </div>
               <Button
                 variant='ghost'
                 size='sm'
                 onClick={() => setIsEditModalOpen(false)}
-                className='absolute right-4 top-4 text-white rounded-full w-8 h-8 p-0'
+                className='h-8 w-8 p-0 rounded-lg hover:bg-gray-100'
               >
                 <X className='w-4 h-4' />
               </Button>
             </DialogHeader>
 
-            <div className='space-y-4 py-4'>
-              <div className='space-y-2'>
-                <Label
-                  htmlFor='edit-name'
-                  className='text-xl font-semibold text-[#000000]'
-                >
-                  Name:
+            <div className='space-y-4 pt-2'>
+              <div className='space-y-1.5'>
+                <Label htmlFor='edit-name' className='text-sm font-medium text-gray-700'>
+                  Full Name
                 </Label>
                 <Input
                   id='edit-name'
@@ -528,16 +579,13 @@ export default function AdministratorsPage() {
                   onChange={(e) =>
                     setFormData({ ...formData, name: e.target.value })
                   }
-                  className='bg-gray-100 text-lg text-black'
+                  className='bg-gray-50 border-gray-200 rounded-xl h-11 text-gray-800 focus:border-[#FEAA39] focus:ring-[#FEAA39]/20'
                 />
               </div>
 
-              <div className='space-y-2'>
-                <Label
-                  htmlFor='edit-email'
-                  className='text-xl font-semibold text-[#000000]'
-                >
-                  Email:
+              <div className='space-y-1.5'>
+                <Label htmlFor='edit-email' className='text-sm font-medium text-gray-700'>
+                  Email Address
                 </Label>
                 <Input
                   id='edit-email'
@@ -546,17 +594,14 @@ export default function AdministratorsPage() {
                   onChange={(e) =>
                     setFormData({ ...formData, email: e.target.value })
                   }
-                  className='bg-gray-100 text-lg text-black'
+                  className='bg-gray-50 border-gray-200 rounded-xl h-11 text-gray-800 placeholder:text-gray-400 focus:border-[#FEAA39] focus:ring-[#FEAA39]/20'
                   placeholder='Enter email'
                 />
               </div>
 
-              <div className='space-y-2 flex items-center justify-between'>
-                <Label
-                  htmlFor='add-role'
-                  className='text-xl font-semibold text-[#000000]'
-                >
-                  Role:
+              <div className='space-y-1.5'>
+                <Label htmlFor='edit-role' className='text-sm font-medium text-gray-700'>
+                  Role
                 </Label>
                 <Select
                   defaultValue={formData.role}
@@ -564,14 +609,14 @@ export default function AdministratorsPage() {
                     setFormData({ ...formData, role: value })
                   }
                 >
-                  <SelectTrigger className='bg-gray-100 text-black border-2'>
+                  <SelectTrigger className='bg-gray-50 border-gray-200 rounded-xl h-11 text-gray-800'>
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value='staff' className='text-black'>
+                    <SelectItem value='staff' className='text-gray-800'>
                       Staff
                     </SelectItem>
-                    <SelectItem value='superadmin' className='text-black'>
+                    <SelectItem value='superadmin' className='text-gray-800'>
                       Super Admin
                     </SelectItem>
                   </SelectContent>
@@ -583,15 +628,15 @@ export default function AdministratorsPage() {
               <Button
                 variant='outline'
                 onClick={() => setIsEditModalOpen(false)}
-                className='flex-1 bg-[#FEAA39] hover:bg-[#FEAA39] text-[#FEAA39] border !border-[#FEAA39] hover:!border-[#000000] cursor-pointer'
+                className='flex-1 h-11 rounded-xl border-gray-200 text-gray-700 hover:bg-gray-50 font-medium cursor-pointer transition-all duration-200'
               >
                 Cancel
               </Button>
               <Button
                 onClick={handleUpdateAdmin}
-                className='flex-1 bg-[#FEAA39] hover:bg-[#FEAA39] text-white cursor-pointer'
+                className='flex-1 h-11 rounded-xl bg-gradient-to-r from-[#315D62] to-[#27484c] hover:from-[#27484c] hover:to-[#1e3d40] text-white font-medium cursor-pointer shadow-md shadow-[#315D62]/20 transition-all duration-200'
               >
-                Save
+                Save Changes
               </Button>
             </div>
           </DialogContent>
@@ -599,38 +644,44 @@ export default function AdministratorsPage() {
 
         {/* Delete Confirmation Modal */}
         <Dialog open={isDeleteModalOpen} onOpenChange={setIsDeleteModalOpen}>
-          <DialogContent className='sm:max-w-sm'>
-            <DialogHeader>
+          <DialogContent className='sm:max-w-sm rounded-2xl'>
+            <DialogHeader className='flex flex-row items-end justify-end space-y-0'>
               <Button
                 variant='ghost'
                 size='sm'
                 onClick={() => setIsDeleteModalOpen(false)}
-                className='absolute right-4 top-4 text-white rounded-full w-8 h-8 p-0'
+                className='h-8 w-8 p-0 rounded-lg hover:bg-gray-100'
               >
                 <X className='w-4 h-4' />
               </Button>
             </DialogHeader>
 
-            <div className='text-center py-6'>
-              <h3 className='text-2xl font-semibold text-gray-900 mb-6'>
-                Are You Sure?
+            <div className='text-center pb-2'>
+              <div className='flex h-16 w-16 items-center justify-center rounded-full bg-red-50 mx-auto mb-4'>
+                <AlertTriangle className='h-8 w-8 text-red-500' />
+              </div>
+              <h3 className='text-xl font-bold text-gray-900 mb-2'>
+                Delete Administrator?
               </h3>
+              <p className='text-sm text-gray-500 mb-6'>
+                This action cannot be undone. The administrator will lose all access.
+              </p>
 
               <div className='flex gap-3'>
                 <Button
                   variant='outline'
                   onClick={() => setIsDeleteModalOpen(false)}
-                  className='flex-1 bg-[#FEAA39] hover:bg-[#FEAA39] text-[#FEAA39] border !border-[#FEAA39] hover:!border-[#000000] cursor-pointer'
+                  className='flex-1 h-11 rounded-xl border-gray-200 text-gray-700 hover:bg-gray-50 font-medium cursor-pointer transition-all duration-200'
                 >
                   Cancel
                 </Button>
 
                 <Button
                   onClick={confirmDeleteAdmin}
-                  className='flex-1 bg-[#FF0000] hover:bg-red-600 cursor-pointer text-white flex items-center justify-center gap-2'
+                  className='flex-1 h-11 rounded-xl bg-red-500 hover:bg-red-600 cursor-pointer text-white font-medium flex items-center justify-center gap-2 shadow-md shadow-red-500/20 transition-all duration-200'
                 >
                   <Trash2 className='w-4 h-4' />
-                  Delete Account
+                  Delete
                 </Button>
               </div>
             </div>
