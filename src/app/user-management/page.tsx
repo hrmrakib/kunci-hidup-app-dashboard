@@ -314,14 +314,6 @@ export default function UserListPage() {
                   User Details
                 </DialogTitle>
               </div>
-              <Button
-                variant='ghost'
-                size='sm'
-                className='h-8 w-8 p-0 rounded-lg hover:bg-gray-100'
-                onClick={() => setActionModalOpen(false)}
-              >
-                <X className='h-4 w-4' />
-              </Button>
             </DialogHeader>
             {selectedUser && (
               <div className='space-y-1 pt-2'>
