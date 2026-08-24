@@ -397,14 +397,6 @@ export default function UserListPage() {
                   )}
                 </div>
               </div>
-              <Button
-                variant='ghost'
-                size='sm'
-                className='h-8 w-8 p-0 rounded-lg hover:bg-gray-100'
-                onClick={() => setAnswersModalOpen(false)}
-              >
-                <X className='h-4 w-4' />
-              </Button>
             </DialogHeader>
             <div className='space-y-3 pt-2'>
               {answers.length === 0 && (
