@@ -69,12 +69,12 @@ export default function DashboardSidebar() {
             </Link>
 
             <SidebarMenu className='px-6 space-y-2'>
-              <NavItem
+              {/* <NavItem
                 href='/'
                 icon={LayoutDashboard}
                 label='Dashboard'
                 active={pathname === "/"}
-              />
+              /> */}
 
               <NavItem
                 href='/user-management'
