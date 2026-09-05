@@ -66,7 +66,7 @@ export default function JournalPromptsPage() {
         setIsDeleteModalOpen(false);
         setDeleteItemId(0);
       }
-    } catch (error) {
+    } catch {
       toast.error("Fail to create sprial, try again later!");
     } finally {
       setIsDeleteModalOpen(false);

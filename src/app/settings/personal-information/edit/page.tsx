@@ -82,7 +82,7 @@ export default function PersonalInformationEditPage() {
         toast.success("Profile updated successfully!");
         router.push("/settings/personal-information");
       }
-    } catch (error) {
+    } catch {
       toast.error("Profile update failed!");
     }
   };

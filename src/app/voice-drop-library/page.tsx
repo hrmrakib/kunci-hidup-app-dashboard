@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { useState, useMemo } from "react";
@@ -110,7 +109,7 @@ export default function VoicesPage() {
         setIsActionModalOpen(false);
         setSelectedVoice(null);
       }
-    } catch (error) {
+    } catch {
       toast.error("Voice deleting fail!");
     }
   };
@@ -127,7 +126,7 @@ export default function VoicesPage() {
         );
         setIsActionModalOpen(false);
       }
-    } catch (error) {
+    } catch {
       toast.error("Voice deleting fail!");
     }
   };

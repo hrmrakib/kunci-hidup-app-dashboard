@@ -69,7 +69,7 @@ export default function OnboardingQuestionsPage() {
       toast.success("Question created successfully");
       setIsCreateModalOpen(false);
       setQuestionText("");
-    } catch (error) {
+    } catch {
       toast.error("Failed to create question");
     }
   };
@@ -83,7 +83,7 @@ export default function OnboardingQuestionsPage() {
       setIsEditModalOpen(false);
       setSelectedQuestion(null);
       setQuestionText("");
-    } catch (error) {
+    } catch {
       toast.error("Failed to update question");
     }
   };
@@ -95,7 +95,7 @@ export default function OnboardingQuestionsPage() {
       toast.success("Question deleted successfully");
       setIsDeleteModalOpen(false);
       setSelectedQuestion(null);
-    } catch (error) {
+    } catch {
       toast.error("Failed to delete question");
     }
   };
@@ -206,7 +206,7 @@ export default function OnboardingQuestionsPage() {
                           <MessageCircleQuestion className='h-7 w-7 text-gray-400' />
                         </div>
                         <p className='text-sm font-medium text-gray-500'>No questions found</p>
-                        <p className='text-xs text-gray-400'>Click "Add Question" to create one</p>
+                        <p className='text-xs text-gray-400'>Click &quot;Add Question&quot; to create one</p>
                       </div>
                     </td>
                   </tr>
@@ -306,7 +306,7 @@ export default function OnboardingQuestionsPage() {
               </p>
               {selectedQuestion && (
                 <div className="mt-4 p-3 bg-gray-50 rounded-lg border border-gray-100">
-                  <p className="text-sm font-medium text-gray-800 line-clamp-2">"{selectedQuestion.text}"</p>
+                  <p className="text-sm font-medium text-gray-800 line-clamp-2">&quot;{selectedQuestion.text}&quot;</p>
                 </div>
               )}
             </div>

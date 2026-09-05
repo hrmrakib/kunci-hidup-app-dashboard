@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { ArrowLeft, Edit, User, Mail, Phone, ShieldCheck } from "lucide-react";
+import { ArrowLeft, Edit, User, Mail, ShieldCheck } from "lucide-react";
 import { getImageURL } from "@/utils/getImageURL";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";

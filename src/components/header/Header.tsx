@@ -1,8 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
-import { Button } from "../ui/button";
-import { Bell } from "lucide-react";
+import React from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { usePathname } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";

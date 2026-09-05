@@ -1,5 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import baseAPI from "@/redux/api/baseAPI";
+import { baseAPI } from "../../api/baseAPI";
 
 const sprialManagementAPI = baseAPI.injectEndpoints({
   endpoints: (builder) => ({

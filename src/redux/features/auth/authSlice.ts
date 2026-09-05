@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Role } from "@/config/Role";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
