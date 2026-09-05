@@ -3,7 +3,7 @@
 import type React from "react";
 
 import Link from "next/link";
-import { LayoutDashboard, Users, Settings } from "lucide-react";
+import { LayoutDashboard, Users, Settings, MessageCircleQuestion } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
   Sidebar,
@@ -142,6 +142,16 @@ export default function DashboardSidebar() {
                 label='Setting'
                 active={
                   pathname === "/settings" || pathname.startsWith("/settings/")
+                }
+              />
+
+              <NavItem
+                href='/onboarding-questions'
+                icon={MessageCircleQuestion}
+                label='Onboarding Questions'
+                active={
+                  pathname === "/onboarding-questions" ||
+                  pathname.startsWith("/onboarding-questions/")
                 }
               />
             </SidebarMenu>
