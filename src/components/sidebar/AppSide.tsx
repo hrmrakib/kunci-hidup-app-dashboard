@@ -126,15 +126,15 @@ export default function DashboardSidebar() {
                 }
               />
 
-              {/* <NavItem
-                href='/journal-pro-manager'
-                icon={Settings}
-                label='Journal Pro. Manager'
+             <NavItem
+                href='/onboarding-questions'
+                icon={MessageCircleQuestion}
+                label='Onboarding Questions'
                 active={
-                  pathname === "/journal-pro-manager" ||
-                  pathname.startsWith("/journal-pro-manager/")
+                  pathname === "/onboarding-questions" ||
+                  pathname.startsWith("/onboarding-questions/")
                 }
-              /> */}
+              />
 
               <NavItem
                 href='/settings'
@@ -145,15 +145,6 @@ export default function DashboardSidebar() {
                 }
               />
 
-              <NavItem
-                href='/onboarding-questions'
-                icon={MessageCircleQuestion}
-                label='Onboarding Questions'
-                active={
-                  pathname === "/onboarding-questions" ||
-                  pathname.startsWith("/onboarding-questions/")
-                }
-              />
             </SidebarMenu>
           </SidebarContent>
 
